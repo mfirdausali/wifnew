@@ -6,6 +6,14 @@ import { prisma } from '@config/database';
 import { HTTP_STATUS } from '@utils/constants';
 import { getPaginationParams, createPaginatedResponse } from '@utils/helpers';
 
+interface AuthRequest extends Request {
+  user?: {
+    id: string;
+    email: string;
+    role: string;
+  };
+}
+
 const router = Router();
 
 // All operations routes require authentication and operations/admin role
@@ -102,7 +110,7 @@ router.get('/orders', async (req: Request, res: Response, next: NextFunction) =>
 });
 
 // Update order status
-router.patch('/orders/:orderId/status', async (req: Request, res: Response, next: NextFunction) => {
+router.patch('/orders/:orderId/status', async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { orderId } = req.params;
     const { status } = req.body;
@@ -143,7 +151,7 @@ router.patch('/orders/:orderId/status', async (req: Request, res: Response, next
 });
 
 // Bulk update order statuses
-router.patch('/orders/bulk-status', async (req: Request, res: Response, next: NextFunction) => {
+router.patch('/orders/bulk-status', async (req: AuthRequest, res: Response, next: NextFunction) => {
   try {
     const { orderIds, status } = req.body;
 

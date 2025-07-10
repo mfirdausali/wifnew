@@ -1,4 +1,4 @@
-import jwt from 'jsonwebtoken';
+import jwt, { Secret, SignOptions } from 'jsonwebtoken';
 import { User } from '@prisma/client';
 import { env } from '@config/env';
 import { prisma } from '@config/database';
@@ -24,12 +24,10 @@ interface TokenPair {
 export class TokenService {
   private static generateToken(
     payload: object,
-    expiresIn: string,
+    expiresIn: string | number,
     secret: string = env.JWT_SECRET
   ): string {
-    return jwt.sign(payload, secret as jwt.Secret, { 
-      expiresIn 
-    });
+    return jwt.sign(payload, secret, { expiresIn } as SignOptions);
   }
 
   static async generateTokenPair(user: User): Promise<TokenPair> {

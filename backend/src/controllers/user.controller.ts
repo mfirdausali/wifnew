@@ -4,8 +4,16 @@ import { getPaginationParams, createPaginatedResponse } from '@utils/helpers';
 import { HTTP_STATUS } from '@utils/constants';
 import { UserRole } from '@prisma/client';
 
+interface AuthRequest extends Request {
+  user?: {
+    id: string;
+    email: string;
+    role: string;
+  };
+}
+
 export class UserController {
-  static async createUser(req: Request, res: Response, next: NextFunction) {
+  static async createUser(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const user = await UserService.createUser(req.body, req.user!.id);
       
@@ -55,7 +63,7 @@ export class UserController {
     }
   }
 
-  static async updateUser(req: Request, res: Response, next: NextFunction) {
+  static async updateUser(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { userId } = req.params;
       const user = await UserService.updateUser(userId, req.body, req.user!.id);
@@ -70,7 +78,7 @@ export class UserController {
     }
   }
 
-  static async updateUserRole(req: Request, res: Response, next: NextFunction) {
+  static async updateUserRole(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { userId } = req.params;
       const { role } = req.body;
@@ -92,7 +100,7 @@ export class UserController {
     }
   }
 
-  static async updateUserStatus(req: Request, res: Response, next: NextFunction) {
+  static async updateUserStatus(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { userId } = req.params;
       const { status } = req.body;
@@ -114,7 +122,7 @@ export class UserController {
     }
   }
 
-  static async deleteUser(req: Request, res: Response, next: NextFunction) {
+  static async deleteUser(req: AuthRequest, res: Response, next: NextFunction) {
     try {
       const { userId } = req.params;
       

@@ -4,8 +4,17 @@ import { UnauthorizedError } from '@utils/errors';
 import { UserRole } from '@prisma/client';
 import logger from '@utils/logger';
 
+interface AuthRequest extends Request {
+  user?: {
+    id: string;
+    email: string;
+    role: string;
+  };
+  sessionId?: string;
+}
+
 export const authenticate = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ) => {
@@ -34,7 +43,7 @@ export const authenticate = async (
 };
 
 export const authorize = (...allowedRoles: UserRole[]) => {
-  return (req: Request, res: Response, next: NextFunction) => {
+  return (req: AuthRequest, res: Response, next: NextFunction) => {
     if (!req.user) {
       return next(new UnauthorizedError('Authentication required'));
     }
@@ -55,7 +64,7 @@ export const authorize = (...allowedRoles: UserRole[]) => {
 };
 
 export const optionalAuth = async (
-  req: Request,
+  req: AuthRequest,
   res: Response,
   next: NextFunction
 ) => {

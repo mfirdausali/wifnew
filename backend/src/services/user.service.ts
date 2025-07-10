@@ -166,7 +166,7 @@ export class UserService {
         action: AUDIT_ACTIONS.USER_UPDATE,
         resource: 'users',
         resourceId: userId,
-        details: data,
+        details: data as any,
       },
     });
 
