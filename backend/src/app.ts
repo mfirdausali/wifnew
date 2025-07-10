@@ -5,7 +5,7 @@ import compression from 'compression';
 import { corsOptions } from './config/cors';
 import { errorHandler } from './middleware/error.middleware';
 import { requestLogger } from './middleware/logger.middleware';
-import { rateLimiter } from './middleware/rateLimiter.middleware';
+import { generalLimiter } from './middleware/rateLimiter.middleware';
 import routes from './routes';
 
 export const app = express();
@@ -25,10 +25,10 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use(requestLogger);
 
 // Rate limiting
-app.use('/api/', rateLimiter);
+app.use('/api/', generalLimiter);
 
 // Health check
-app.get('/health', (req, res) => {
+app.get('/health', (_req, res) => {
   res.json({
     status: 'ok',
     timestamp: new Date().toISOString(),

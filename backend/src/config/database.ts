@@ -1,25 +1,46 @@
 import { PrismaClient } from '@prisma/client';
-import { logger } from '../utils/logger';
+import { env } from './env';
 
-// Prevent multiple instances during development
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
+// Singleton pattern for Prisma Client
+let prisma: PrismaClient;
 
-export const prisma =
-  globalForPrisma.prisma ||
-  new PrismaClient({
-    log: process.env.NODE_ENV === 'development' 
-      ? ['query', 'info', 'warn', 'error']
-      : ['error'],
-  });
-
-if (process.env.NODE_ENV !== 'production') {
-  globalForPrisma.prisma = prisma;
+declare global {
+  var __prisma: PrismaClient | undefined;
 }
 
-// Log database queries in development
-if (process.env.NODE_ENV === 'development') {
-  prisma.$on('query' as any, (e: any) => {
-    logger.debug('Query:', e.query);
-    logger.debug('Duration:', e.duration + 'ms');
+if (env.NODE_ENV === 'production') {
+  prisma = new PrismaClient({
+    log: ['error'],
   });
+} else {
+  if (!global.__prisma) {
+    global.__prisma = new PrismaClient({
+      log: ['query', 'info', 'warn', 'error'],
+    });
+  }
+  prisma = global.__prisma;
 }
+
+// Handle connection errors
+prisma.$connect()
+  .then(() => {
+    console.log('✅ Database connected successfully');
+  })
+  .catch((error) => {
+    console.error('❌ Database connection failed:', error);
+    process.exit(1);
+  });
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  await prisma.$disconnect();
+  process.exit(0);
+});
+
+process.on('SIGTERM', async () => {
+  await prisma.$disconnect();
+  process.exit(0);
+});
+
+export { prisma };
+export default prisma;

@@ -1,8 +1,7 @@
 import 'dotenv/config';
-import express from 'express';
 import { createServer } from 'http';
 import { app } from './app';
-import { logger } from './utils/logger';
+import logger from './utils/logger';
 import { prisma } from './config/database';
 import { redis } from './config/redis';
 

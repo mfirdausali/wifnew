@@ -1,15 +1,22 @@
 import { CorsOptions } from 'cors';
-
-const allowedOrigins = [
-  process.env.CORS_ORIGIN || 'http://localhost:3000',
-  'http://localhost:3000',
-  'http://localhost:3001',
-];
+import { env } from './env';
 
 export const corsOptions: CorsOptions = {
   origin: (origin, callback) => {
     // Allow requests with no origin (like mobile apps or Postman)
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin) {
+      return callback(null, true);
+    }
+
+    // In development, allow all origins
+    if (env.NODE_ENV === 'development') {
+      return callback(null, true);
+    }
+
+    // In production, check against allowed origins
+    const allowedOrigins = [env.CORS_ORIGIN, env.FRONTEND_URL];
+    
+    if (allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
@@ -18,6 +25,6 @@ export const corsOptions: CorsOptions = {
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  exposedHeaders: ['X-Total-Count', 'X-Page', 'X-Limit'],
+  exposedHeaders: ['X-Total-Count', 'X-Page', 'X-Per-Page'],
   maxAge: 86400, // 24 hours
 };

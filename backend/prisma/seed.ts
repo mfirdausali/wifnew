@@ -1,4 +1,4 @@
-import { PrismaClient, Role, UserStatus } from '@prisma/client';
+import { PrismaClient, UserRole, UserStatus } from '@prisma/client';
 import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
@@ -6,98 +6,92 @@ const prisma = new PrismaClient();
 async function main() {
   console.log('🌱 Starting database seed...');
 
-  // Create default users for each role
+  // Hash passwords
+  const hashedPassword = await bcrypt.hash('password123', 10);
+
+  // Create users for each role
   const users = [
     {
-      email: 'admin@localhost',
-      username: 'admin',
-      password: 'admin123',
+      email: 'admin@example.com',
+      password: hashedPassword,
       firstName: 'Admin',
       lastName: 'User',
-      role: Role.ADMIN,
+      role: UserRole.ADMIN,
       status: UserStatus.ACTIVE,
       emailVerified: true,
-      emailVerifiedAt: new Date(),
-      department: 'Administration'
+      department: 'Administration',
     },
     {
-      email: 'sales@localhost',
-      username: 'sales',
-      password: 'sales123',
+      email: 'sales@example.com',
+      password: hashedPassword,
       firstName: 'Sales',
-      lastName: 'User',
-      role: Role.SALES,
+      lastName: 'Manager',
+      role: UserRole.SALES,
       status: UserStatus.ACTIVE,
       emailVerified: true,
-      emailVerifiedAt: new Date(),
-      department: 'Sales'
+      department: 'Sales',
     },
     {
-      email: 'finance@localhost',
-      username: 'finance',
-      password: 'finance123',
+      email: 'finance@example.com',
+      password: hashedPassword,
       firstName: 'Finance',
-      lastName: 'User',
-      role: Role.FINANCE,
+      lastName: 'Director',
+      role: UserRole.FINANCE,
       status: UserStatus.ACTIVE,
       emailVerified: true,
-      emailVerifiedAt: new Date(),
-      department: 'Finance'
+      department: 'Finance',
     },
     {
-      email: 'operations@localhost',
-      username: 'operations',
-      password: 'operations123',
+      email: 'operations@example.com',
+      password: hashedPassword,
       firstName: 'Operations',
-      lastName: 'User',
-      role: Role.OPERATIONS,
+      lastName: 'Manager',
+      role: UserRole.OPERATIONS,
       status: UserStatus.ACTIVE,
       emailVerified: true,
-      emailVerifiedAt: new Date(),
-      department: 'Operations'
-    }
+      department: 'Operations',
+    },
   ];
 
-  // Hash passwords and create users
+  // Create users
   for (const userData of users) {
-    const hashedPassword = await bcrypt.hash(userData.password, 10);
-    
     const user = await prisma.user.upsert({
       where: { email: userData.email },
       update: {},
-      create: {
-        ...userData,
-        password: hashedPassword
-      }
+      create: userData,
     });
-
-    console.log(`✅ Created/Updated user: ${user.email} (${user.role})`);
+    console.log(`✅ Created/Updated user: ${user.email} with role: ${user.role}`);
   }
 
-  // Create sample notifications for admin user
-  const adminUser = await prisma.user.findUnique({
-    where: { email: 'admin@localhost' }
-  });
+  // Create sample customers
+  const customers = [
+    {
+      name: 'Acme Corporation',
+      email: 'contact@acme.com',
+      phone: '+1234567890',
+      company: 'Acme Corporation',
+      address: '123 Business Street',
+      city: 'New York',
+      country: 'USA',
+    },
+    {
+      name: 'Global Tech Solutions',
+      email: 'info@globaltech.com',
+      phone: '+0987654321',
+      company: 'Global Tech Solutions',
+      address: '456 Innovation Avenue',
+      city: 'San Francisco',
+      country: 'USA',
+    },
+  ];
 
-  if (adminUser) {
-    await prisma.notification.createMany({
-      data: [
-        {
-          userId: adminUser.id,
-          title: 'Welcome to the Multi-Role Auth System',
-          message: 'Your admin account has been successfully created.',
-          type: 'success'
-        },
-        {
-          userId: adminUser.id,
-          title: 'Security Reminder',
-          message: 'Please change your default password after first login.',
-          type: 'warning'
-        }
-      ]
+  for (const customerData of customers) {
+    const customer = await prisma.customer.upsert({
+      where: { email: customerData.email },
+      update: {},
+      create: customerData,
     });
-
-    console.log('✅ Created sample notifications for admin user');
+    console.log(`✅ Created/Updated customer: ${customer.name}`);
   }
 
   console.log('🎉 Database seed completed successfully!');

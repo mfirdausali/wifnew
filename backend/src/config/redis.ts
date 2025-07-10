@@ -1,22 +1,47 @@
-import { createClient } from 'redis';
-import { logger } from '../utils/logger';
+import Redis from 'ioredis';
+import { env } from './env';
 
-const redisUrl = process.env.REDIS_URL || 'redis://:localpass@localhost:6379';
-
-export const redis = createClient({
-  url: redisUrl,
+// Create Redis client
+const redis = new Redis(env.REDIS_URL, {
+  password: env.REDIS_PASSWORD,
+  retryStrategy: (times) => {
+    const delay = Math.min(times * 50, 2000);
+    return delay;
+  },
+  maxRetriesPerRequest: 3,
+  enableReadyCheck: true,
+  lazyConnect: false,
 });
 
-redis.on('error', (err) => {
-  logger.error('Redis Client Error:', err);
-});
-
+// Event handlers
 redis.on('connect', () => {
-  logger.info('Redis Client Connected');
+  console.log('🔄 Redis connecting...');
 });
 
-// Connect to Redis
-redis.connect().catch((err) => {
-  logger.error('Failed to connect to Redis:', err);
-  // Don't exit the process, allow the app to run without Redis
+redis.on('ready', () => {
+  console.log('✅ Redis connected successfully');
 });
+
+redis.on('error', (error) => {
+  console.error('❌ Redis connection error:', error);
+});
+
+redis.on('close', () => {
+  console.log('🔌 Redis connection closed');
+});
+
+redis.on('reconnecting', () => {
+  console.log('🔄 Redis reconnecting...');
+});
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  await redis.quit();
+});
+
+process.on('SIGTERM', async () => {
+  await redis.quit();
+});
+
+export { redis };
+export default redis;
