@@ -1,0 +1,147 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Enum for user roles
+enum UserRole {
+  ADMIN
+  SALES
+  FINANCE
+  OPERATIONS
+}
+
+// Enum for user status
+enum UserStatus {
+  ACTIVE
+  INACTIVE
+  SUSPENDED
+  DELETED
+}
+
+model User {
+  id              String      @id @default(uuid())
+  email           String      @unique
+  password        String
+  firstName       String      @map("first_name")
+  lastName        String      @map("last_name")
+  role            UserRole    @default(SALES)
+  status          UserStatus  @default(ACTIVE)
+  emailVerified   Boolean     @default(false) @map("email_verified")
+  profilePicture  String?     @map("profile_picture")
+  phoneNumber     String?     @map("phone_number")
+  department      String?
+  
+  // Timestamps
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+  lastLoginAt     DateTime?   @map("last_login_at")
+  
+  // Relations
+  refreshTokens   RefreshToken[]
+  auditLogs       AuditLog[]
+  sessions        Session[]
+  
+  @@map("users")
+  @@index([email])
+  @@index([role])
+  @@index([status])
+}
+
+model RefreshToken {
+  id              String      @id @default(uuid())
+  token           String      @unique
+  userId          String      @map("user_id")
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  expiresAt       DateTime    @map("expires_at")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  revokedAt       DateTime?   @map("revoked_at")
+  
+  @@map("refresh_tokens")
+  @@index([token])
+  @@index([userId])
+}
+
+model Session {
+  id              String      @id @default(uuid())
+  userId          String      @map("user_id")
+  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ipAddress       String?     @map("ip_address")
+  userAgent       String?     @map("user_agent")
+  isActive        Boolean     @default(true) @map("is_active")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  expiresAt       DateTime    @map("expires_at")
+  
+  @@map("sessions")
+  @@index([userId])
+  @@index([isActive])
+}
+
+model AuditLog {
+  id              String      @id @default(uuid())
+  userId          String?     @map("user_id")
+  user            User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
+  action          String
+  resource        String
+  resourceId      String?     @map("resource_id")
+  details         Json?
+  ipAddress       String?     @map("ip_address")
+  userAgent       String?     @map("user_agent")
+  createdAt       DateTime    @default(now()) @map("created_at")
+  
+  @@map("audit_logs")
+  @@index([userId])
+  @@index([action])
+  @@index([resource])
+  @@index([createdAt])
+}
+
+// Additional models for business functionality
+model Customer {
+  id              String      @id @default(uuid())
+  name            String
+  email           String      @unique
+  phone           String?
+  company         String?
+  address         String?
+  city            String?
+  country         String?
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+  
+  // Relations
+  orders          Order[]
+  
+  @@map("customers")
+  @@index([email])
+}
+
+model Order {
+  id              String      @id @default(uuid())
+  orderNumber     String      @unique @map("order_number")
+  customerId      String      @map("customer_id")
+  customer        Customer    @relation(fields: [customerId], references: [id])
+  totalAmount     Decimal     @map("total_amount") @db.Decimal(10, 2)
+  status          OrderStatus @default(PENDING)
+  createdAt       DateTime    @default(now()) @map("created_at")
+  updatedAt       DateTime    @updatedAt @map("updated_at")
+  
+  @@map("orders")
+  @@index([customerId])
+  @@index([status])
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
