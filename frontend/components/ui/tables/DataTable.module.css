@@ -1,0 +1,115 @@
+/* DataTable Container */
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  background-color: var(--color-white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.container.responsive {
+  overflow-x: auto;
+}
+
+.container.bordered {
+  border: 1px solid var(--color-gray-200);
+}
+
+/* Table Container */
+.tableContainer {
+  width: 100%;
+  overflow: auto;
+  position: relative;
+}
+
+/* Table */
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-size-sm);
+}
+
+.table.striped tbody tr:nth-child(even) {
+  background-color: var(--color-gray-50);
+}
+
+.table.hoverable tbody tr:hover {
+  background-color: var(--color-gray-50);
+}
+
+.table.compact td,
+.table.compact th {
+  padding: var(--spacing-2) var(--spacing-3);
+}
+
+/* Sticky Header */
+.table.stickyHeader thead {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--color-white);
+  box-shadow: 0 1px 0 var(--color-gray-200);
+}
+
+/* Sticky First Column */
+.table.stickyFirstColumn td:first-child,
+.table.stickyFirstColumn th:first-child {
+  position: sticky;
+  left: 0;
+  z-index: 5;
+  background-color: inherit;
+}
+
+.table.stickyFirstColumn.stickyHeader th:first-child {
+  z-index: 11;
+}
+
+/* Table Body */
+.tbody {
+  position: relative;
+}
+
+/* Error State */
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-8);
+  text-align: center;
+}
+
+.error p {
+  color: var(--color-danger-600);
+  margin-bottom: var(--spacing-4);
+}
+
+.retryButton {
+  padding: var(--spacing-2) var(--spacing-4);
+  background-color: var(--color-primary-600);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  cursor: pointer;
+  transition: background-color var(--duration-200);
+}
+
+.retryButton:hover {
+  background-color: var(--color-primary-700);
+}
+
+/* Filters */
+.filters {
+  padding: var(--spacing-4);
+  border-bottom: 1px solid var(--color-gray-200);
+  background-color: var(--color-gray-50);
+}
+
+/* Pagination */
+.pagination {
+  padding: var(--spacing-4);
+  border-top: 1px solid var(--color-gray-200);
+}

@@ -1,0 +1,54 @@
+/* Table Row */
+.row {
+  border-bottom: 1px solid var(--color-gray-200);
+  transition: all var(--duration-200);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+/* States */
+.row.selected {
+  background-color: var(--color-primary-50);
+}
+
+.row.expanded {
+  background-color: var(--color-gray-50);
+}
+
+.row.striped {
+  background-color: var(--color-gray-50);
+}
+
+.row.hoverable:hover {
+  background-color: var(--color-gray-50);
+}
+
+.row.clickable {
+  cursor: pointer;
+}
+
+.row.expandable {
+  cursor: pointer;
+}
+
+/* Focus state for keyboard navigation */
+.row:focus {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: -2px;
+}
+
+.row:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Expanded Row */
+.expandedRow {
+  background-color: var(--color-gray-50);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.expandedContent {
+  padding: var(--spacing-4);
+}

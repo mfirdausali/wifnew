@@ -1,0 +1,315 @@
+.modalTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+}
+
+.stepIndicator {
+  display: flex;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.step {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-md);
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-600);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.step.active {
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-700);
+}
+
+.step.completed {
+  background-color: var(--color-success-100);
+  color: var(--color-success-700);
+}
+
+.stepIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
+.stepTitle {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.stepContent {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.formField {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-gray-700);
+}
+
+.error {
+  font-size: 0.75rem;
+  color: var(--color-danger-600);
+}
+
+.radioGroup {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.roleGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.roleCard {
+  padding: 1rem;
+  border: 2px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.roleCard:hover {
+  border-color: var(--color-primary-300);
+  background-color: var(--color-primary-50);
+}
+
+.roleCard.selected {
+  border-color: var(--color-primary-500);
+  background-color: var(--color-primary-100);
+}
+
+.roleCard h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.roleCard p {
+  font-size: 0.75rem;
+  color: var(--color-gray-600);
+}
+
+.accessLevelSlider {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.slider {
+  width: 100%;
+  height: 0.5rem;
+  border-radius: var(--radius-full);
+  background-color: var(--color-gray-200);
+  outline: none;
+  cursor: pointer;
+}
+
+.slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: var(--radius-full);
+  background-color: var(--color-primary-500);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.slider::-webkit-slider-thumb:hover {
+  background-color: var(--color-primary-600);
+  transform: scale(1.1);
+}
+
+.sliderLabels {
+  display: flex;
+  justify-content: space-between;
+}
+
+.sliderLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.75rem;
+  color: var(--color-gray-600);
+}
+
+.permissionGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: var(--color-gray-50);
+  border-radius: var(--radius-md);
+  max-height: 20rem;
+  overflow-y: auto;
+}
+
+.passwordFieldWrapper {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+}
+
+.passwordFieldWrapper > div:first-child {
+  flex: 1;
+}
+
+.passwordToggle {
+  background: none;
+  border: none;
+  color: var(--color-gray-600);
+  cursor: pointer;
+  padding: 0.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.passwordToggle:hover {
+  color: var(--color-gray-800);
+}
+
+.generateButton {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-700);
+  border: 1px solid var(--color-primary-300);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.generateButton:hover {
+  background-color: var(--color-primary-200);
+  border-color: var(--color-primary-400);
+}
+
+.passwordStrength {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+}
+
+.strengthBar {
+  flex: 1;
+  height: 0.25rem;
+  background-color: var(--color-gray-200);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.strengthFill {
+  height: 100%;
+  transition: all 0.3s ease;
+}
+
+.securityOptions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  background-color: var(--color-gray-50);
+  border-radius: var(--radius-md);
+}
+
+.infoBox {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--color-info-50);
+  border: 1px solid var(--color-info-200);
+  border-radius: var(--radius-md);
+  color: var(--color-info-800);
+}
+
+.infoBox svg {
+  flex-shrink: 0;
+  margin-top: 0.125rem;
+}
+
+.infoBox h4 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.infoBox ul {
+  list-style: disc;
+  padding-left: 1.25rem;
+  font-size: 0.75rem;
+}
+
+.infoBox li {
+  margin-bottom: 0.25rem;
+}
+
+.footerContent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.footerLeft {
+  display: flex;
+  align-items: center;
+}
+
+.footerRight {
+  display: flex;
+  gap: 0.75rem;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+  .stepIndicator {
+    flex-direction: column;
+  }
+
+  .stepTitle {
+    display: none;
+  }
+
+  .formGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .roleGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .permissionGrid {
+    grid-template-columns: 1fr;
+  }
+}

@@ -1,0 +1,477 @@
+.loadingContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+}
+
+.errorContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: var(--color-danger-600);
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.5rem;
+}
+
+.headerInfo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.userName {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--color-gray-900);
+}
+
+.userEmail {
+  font-size: 0.875rem;
+  color: var(--color-gray-600);
+}
+
+.headerActions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.deleteButton {
+  color: var(--color-danger-600);
+  border-color: var(--color-danger-600);
+}
+
+.deleteButton:hover {
+  background-color: var(--color-danger-50);
+  border-color: var(--color-danger-700);
+  color: var(--color-danger-700);
+}
+
+.sectionTabs {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--color-gray-200);
+  margin: 0 -1.5rem;
+  padding: 0 1.5rem;
+}
+
+.sectionTab {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--color-gray-600);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.sectionTab:hover {
+  color: var(--color-gray-900);
+  background-color: var(--color-gray-50);
+}
+
+.sectionTab.active {
+  color: var(--color-primary-600);
+  border-bottom-color: var(--color-primary-600);
+}
+
+/* Overview Section */
+.overviewSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.profileHeader {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background-color: var(--color-gray-50);
+  border-radius: var(--radius-lg);
+}
+
+.profileInfo h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.profileInfo p {
+  color: var(--color-gray-600);
+  margin-bottom: 0.75rem;
+}
+
+.badges {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.infoCard {
+  padding: 1.5rem;
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-lg);
+}
+
+.infoCard h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--color-gray-900);
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+}
+
+.infoItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.infoIcon {
+  flex-shrink: 0;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: var(--color-gray-400);
+  margin-top: 0.125rem;
+}
+
+.infoLabel {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-gray-600);
+  margin-bottom: 0.125rem;
+}
+
+.infoValue {
+  font-size: 0.875rem;
+  color: var(--color-gray-900);
+  text-decoration: none;
+}
+
+.infoValue:hover {
+  color: var(--color-primary-600);
+}
+
+.detailsList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.detailItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid var(--color-gray-100);
+}
+
+.detailItem:last-child {
+  border-bottom: none;
+}
+
+.detailLabel {
+  font-size: 0.875rem;
+  color: var(--color-gray-600);
+}
+
+.detailValue {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-gray-900);
+}
+
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.statCard {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  background-color: var(--color-gray-50);
+  border-radius: var(--radius-md);
+}
+
+.statIcon {
+  flex-shrink: 0;
+  width: 2rem;
+  height: 2rem;
+  padding: 0.5rem;
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-600);
+  border-radius: var(--radius-md);
+}
+
+.statValue {
+  display: block;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-gray-900);
+}
+
+.statLabel {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-gray-600);
+}
+
+/* Access Section */
+.accessSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.roleInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.roleItem {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.roleLabel {
+  font-size: 0.875rem;
+  color: var(--color-gray-600);
+}
+
+.roleValue {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.roleDescription {
+  font-size: 0.875rem;
+  color: var(--color-gray-600);
+}
+
+.accessLevelDisplay {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.accessLabel {
+  font-size: 0.875rem;
+  color: var(--color-gray-600);
+}
+
+.accessMeter {
+  position: relative;
+  height: 2rem;
+  background-color: var(--color-gray-200);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.accessFill {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  background-color: var(--color-primary-500);
+  transition: width 0.3s ease;
+}
+
+.accessValue {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-white);
+}
+
+.permissionGroups {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.permissionGroup h5 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--color-gray-700);
+  margin-bottom: 0.75rem;
+}
+
+.permissionList {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.permissionItem {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  background-color: var(--color-gray-50);
+  border-radius: var(--radius-md);
+}
+
+.permissionIcon {
+  flex-shrink: 0;
+  width: 1rem;
+  height: 1rem;
+  color: var(--color-primary-600);
+  margin-top: 0.125rem;
+}
+
+.permissionName {
+  display: block;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-gray-900);
+}
+
+.permissionDesc {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--color-gray-600);
+  margin-top: 0.125rem;
+}
+
+.emptyMessage {
+  text-align: center;
+  color: var(--color-gray-500);
+  padding: 2rem;
+}
+
+/* Activity Section */
+.activitySection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.activityTimeline {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.activityItem {
+  position: relative;
+  display: flex;
+  gap: 1rem;
+}
+
+.activityIcon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  background-color: var(--color-primary-100);
+  color: var(--color-primary-600);
+  border-radius: var(--radius-full);
+  z-index: 1;
+}
+
+.activityContent {
+  flex: 1;
+  padding-bottom: 1rem;
+}
+
+.activityHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.25rem;
+}
+
+.activityAction {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-gray-900);
+}
+
+.activityTime {
+  font-size: 0.75rem;
+  color: var(--color-gray-500);
+}
+
+.activityDetails {
+  font-size: 0.75rem;
+  color: var(--color-gray-600);
+}
+
+.activityLine {
+  position: absolute;
+  left: 1.25rem;
+  top: 2.5rem;
+  bottom: -1.5rem;
+  width: 2px;
+  background-color: var(--color-gray-200);
+}
+
+.loadMoreButton {
+  align-self: center;
+}
+
+.comingSoon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+  color: var(--color-gray-500);
+  font-style: italic;
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+  .headerActions {
+    display: none;
+  }
+
+  .sectionTabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .sectionTab span {
+    display: none;
+  }
+
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .statsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .permissionList {
+    grid-template-columns: 1fr;
+  }
+}

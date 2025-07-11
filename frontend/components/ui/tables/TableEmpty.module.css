@@ -1,0 +1,34 @@
+/* Container */
+.container {
+  padding: var(--spacing-12) var(--spacing-4);
+  text-align: center;
+}
+
+/* Content */
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-4);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* Icon */
+.icon {
+  width: var(--spacing-12);
+  height: var(--spacing-12);
+  color: var(--color-gray-400);
+}
+
+/* Message */
+.message {
+  font-size: var(--font-size-base);
+  color: var(--color-gray-600);
+  line-height: var(--line-height-relaxed);
+}
+
+/* Action */
+.action {
+  margin-top: var(--spacing-2);
+}

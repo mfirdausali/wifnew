@@ -1,0 +1,92 @@
+/* User Cell */
+.userCell {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+  min-width: 200px;
+}
+
+/* User Info */
+.userInfo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-0-5);
+  flex: 1;
+  min-width: 0;
+}
+
+.userName {
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-900);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.userEmail {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-500);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Access Level */
+.accessLevel {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.accessDescription {
+  font-size: var(--font-size-xs);
+  color: var(--color-gray-600);
+  white-space: nowrap;
+}
+
+/* Time Ago */
+.timeAgo {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  white-space: nowrap;
+}
+
+/* Date */
+.date {
+  font-size: var(--font-size-sm);
+  color: var(--color-gray-600);
+  white-space: nowrap;
+}
+
+/* Badge overrides */
+.roleBadge {
+  font-size: var(--font-size-xs);
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-medium);
+  text-transform: capitalize;
+}
+
+.statusBadge {
+  font-size: var(--font-size-xs);
+  padding: var(--spacing-1) var(--spacing-2);
+  border-radius: var(--radius-md);
+  font-weight: var(--font-weight-medium);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .userCell {
+    min-width: 150px;
+  }
+
+  .accessLevel {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-1);
+  }
+
+  .accessDescription {
+    font-size: var(--font-size-2xs);
+  }
+}

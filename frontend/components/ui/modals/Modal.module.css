@@ -1,0 +1,142 @@
+.modalContainer {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+.content {
+  position: relative;
+  background-color: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+  max-height: calc(100vh - 2rem);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+/* Modal sizes */
+.sm {
+  max-width: 28rem; /* 448px */
+}
+
+.md {
+  max-width: 32rem; /* 512px */
+}
+
+.lg {
+  max-width: 48rem; /* 768px */
+}
+
+.xl {
+  max-width: 64rem; /* 1024px */
+}
+
+.full {
+  max-width: calc(100vw - 2rem);
+  max-height: calc(100vh - 2rem);
+}
+
+/* Close button */
+.closeButton {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border: none;
+  background-color: transparent;
+  border-radius: var(--radius-md);
+  color: var(--color-gray-500);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.closeButton:hover {
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-700);
+}
+
+.closeButton:focus {
+  outline: 2px solid var(--color-primary-500);
+  outline-offset: 2px;
+}
+
+/* Modal sections */
+.header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.body {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.footer {
+  padding: 1rem 1.5rem;
+  border-top: 1px solid var(--color-gray-200);
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .content {
+    background-color: var(--color-gray-900);
+    color: var(--color-gray-100);
+  }
+
+  .header {
+    border-bottom-color: var(--color-gray-800);
+  }
+
+  .footer {
+    border-top-color: var(--color-gray-800);
+  }
+
+  .closeButton {
+    color: var(--color-gray-400);
+  }
+
+  .closeButton:hover {
+    background-color: var(--color-gray-800);
+    color: var(--color-gray-200);
+  }
+}
+
+/* Mobile responsiveness */
+@media (max-width: 640px) {
+  .modalContainer {
+    padding: 0;
+  }
+
+  .content {
+    max-height: 100vh;
+    border-radius: 0;
+  }
+
+  .sm,
+  .md,
+  .lg,
+  .xl {
+    max-width: 100%;
+  }
+}

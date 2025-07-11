@@ -1,0 +1,197 @@
+/* Container */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+  padding: var(--spacing-4);
+  background-color: var(--color-gray-50);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+/* Layout variants */
+.container.layout-horizontal .filters {
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.container.layout-vertical .filters {
+  flex-direction: column;
+}
+
+.container.layout-grid .filters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+}
+
+/* Variant styles */
+.container.variant-dropdown {
+  padding: 0;
+  background: transparent;
+  border: none;
+  position: relative;
+}
+
+.container.variant-sidebar {
+  height: 100%;
+  border-bottom: none;
+  border-right: 1px solid var(--color-gray-200);
+}
+
+/* Filters container */
+.filters {
+  display: flex;
+  gap: var(--spacing-3);
+  align-items: center;
+}
+
+/* Search */
+.search {
+  flex: 1;
+  max-width: 400px;
+}
+
+.searchInput {
+  width: 100%;
+}
+
+/* Filter inputs */
+.filterInput,
+.filterSelect {
+  min-width: 150px;
+  max-width: 250px;
+}
+
+/* Multiselect */
+.multiselect {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-2);
+  padding: var(--spacing-2);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-300);
+  border-radius: var(--radius-md);
+}
+
+.multiselectLabel {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-gray-700);
+  margin-bottom: var(--spacing-1);
+}
+
+/* Date range */
+.dateRange {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+/* Dropdown panel */
+.dropdownPanel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: var(--spacing-2);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  z-index: 50;
+  min-width: 300px;
+}
+
+.dropdownContent {
+  padding: var(--spacing-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+.dropdownActions {
+  padding: var(--spacing-3) var(--spacing-4);
+  border-top: 1px solid var(--color-gray-200);
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* Advanced panel */
+.advancedPanel {
+  padding: var(--spacing-4);
+  background-color: var(--color-white);
+  border: 1px solid var(--color-gray-200);
+  border-radius: var(--radius-md);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: var(--spacing-3);
+}
+
+/* Active filters */
+.activeFilters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-2);
+  padding-top: var(--spacing-2);
+}
+
+/* Filter chip */
+.filterChip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  padding: var(--spacing-1) var(--spacing-2);
+  background-color: var(--color-primary-100);
+  border: 1px solid var(--color-primary-200);
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-sm);
+}
+
+.chipLabel {
+  color: var(--color-primary-700);
+  font-weight: var(--font-weight-medium);
+}
+
+.chipValue {
+  color: var(--color-primary-900);
+}
+
+.chipRemove {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+  margin-left: var(--spacing-1);
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-primary-600);
+  transition: all var(--duration-200);
+}
+
+.chipRemove:hover {
+  color: var(--color-primary-800);
+  background-color: var(--color-primary-200);
+  border-radius: var(--radius-full);
+}
+
+.chipRemove svg {
+  width: var(--spacing-3);
+  height: var(--spacing-3);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container.layout-horizontal .filters {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search {
+    max-width: none;
+  }
+
+  .filterInput,
+  .filterSelect {
+    max-width: none;
+  }
+}

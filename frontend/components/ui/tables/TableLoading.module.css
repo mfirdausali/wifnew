@@ -1,0 +1,113 @@
+/* Row */
+.row {
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+/* Cell */
+.cell {
+  padding: var(--spacing-3) var(--spacing-4);
+}
+
+/* Cell content */
+.cellContent {
+  display: flex;
+  align-items: center;
+  min-height: var(--spacing-6);
+}
+
+/* Skeleton base */
+.skeleton {
+  background-color: var(--color-gray-200);
+  border-radius: var(--radius-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Skeleton elements */
+.checkbox {
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+  border-radius: var(--radius-sm);
+}
+
+.avatar {
+  width: var(--spacing-8);
+  height: var(--spacing-8);
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.text {
+  height: var(--spacing-4);
+  border-radius: var(--radius-sm);
+}
+
+.subtext {
+  height: var(--spacing-3);
+  border-radius: var(--radius-sm);
+  opacity: 0.7;
+}
+
+.action {
+  width: var(--spacing-8);
+  height: var(--spacing-8);
+  border-radius: var(--radius-md);
+}
+
+/* User cell layout */
+.userCell {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-3);
+}
+
+.userInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-1);
+}
+
+/* Animations */
+.pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+.wave {
+  background: linear-gradient(
+    90deg,
+    var(--color-gray-200) 25%,
+    var(--color-gray-100) 50%,
+    var(--color-gray-200) 75%
+  );
+  background-size: 200% 100%;
+  animation: wave 1.5s linear infinite;
+}
+
+/* Animation speeds */
+.slow {
+  animation-duration: 3s;
+}
+
+.fast {
+  animation-duration: 1s;
+}
+
+/* Keyframes */
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes wave {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

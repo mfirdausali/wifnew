@@ -177,13 +177,13 @@
   /* Spacing Scale (4px base) */
   --space-0: 0;           /* 0px */
   --space-px: 1px;        /* 1px */
-  --space-0\.5: 0.125rem;  /* 2px */
+  --space-0-5: 0.125rem;  /* 2px */
   --space-1: 0.25rem;     /* 4px */
-  --space-1\.5: 0.375rem;  /* 6px */
+  --space-1-5: 0.375rem;  /* 6px */
   --space-2: 0.5rem;      /* 8px */
-  --space-2\.5: 0.625rem;  /* 10px */
+  --space-2-5: 0.625rem;  /* 10px */
   --space-3: 0.75rem;     /* 12px */
-  --space-3\.5: 0.875rem;  /* 14px */
+  --space-3-5: 0.875rem;  /* 14px */
   --space-4: 1rem;        /* 16px */
   --space-5: 1.25rem;     /* 20px */
   --space-6: 1.5rem;      /* 24px */
@@ -211,13 +211,75 @@
   --space-80: 20rem;      /* 320px */
   --space-96: 24rem;      /* 384px */
 
+  /* Variable aliases for CSS modules */
+  --spacing-0: var(--space-0);
+  --spacing-0-5: var(--space-0-5);
+  --spacing-1: var(--space-1);
+  --spacing-1-5: var(--space-1-5);
+  --spacing-2: var(--space-2);
+  --spacing-2-5: var(--space-2-5);
+  --spacing-3: var(--space-3);
+  --spacing-3-5: var(--space-3-5);
+  --spacing-4: var(--space-4);
+  --spacing-5: var(--space-5);
+  --spacing-6: var(--space-6);
+  --spacing-8: var(--space-8);
+  --spacing-10: var(--space-10);
+  --spacing-12: var(--space-12);
+  --spacing-16: var(--space-16);
+
+  /* Font size aliases */
+  --font-size-xs: var(--text-xs);
+  --font-size-sm: var(--text-sm);
+  --font-size-base: var(--text-base);
+  --font-size-lg: var(--text-lg);
+  --font-size-xl: var(--text-xl);
+  --font-size-2xl: var(--text-2xl);
+  
+  /* Font weight aliases */
+  --font-weight-normal: var(--font-normal);
+  --font-weight-medium: var(--font-medium);
+  --font-weight-semibold: var(--font-semibold);
+  --font-weight-bold: var(--font-bold);
+  
+  /* Line height aliases */
+  --line-height-tight: var(--leading-tight);
+  --line-height-normal: var(--leading-normal);
+  --line-height-relaxed: var(--leading-relaxed);
+  
+  /* Letter spacing aliases */
+  --letter-spacing-normal: var(--tracking-normal);
+  --letter-spacing-wide: var(--tracking-wide);
+  --letter-spacing-wider: var(--tracking-wider);
+  
+  /* Radius aliases */
+  --radius-sm: 0.125rem;
+  --radius-md: 0.25rem;
+  --radius-lg: 0.375rem;
+  --radius-xl: 0.5rem;
+  --radius-2xl: 0.75rem;
+  --radius-full: 9999px;
+  
+  /* Shadow aliases */
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  
+  /* Animation duration aliases */
+  --duration-200: 200ms;
+  
+  /* Color aliases */
+  --color-white: #ffffff;
+
   /* Component Padding */
   --padding-button-sm: var(--space-2) var(--space-3);
-  --padding-button-md: var(--space-2\.5) var(--space-4);
+  --padding-button-md: var(--space-2-5) var(--space-4);
   --padding-button-lg: var(--space-3) var(--space-5);
 
   --padding-input-sm: var(--space-2) var(--space-3);
-  --padding-input-md: var(--space-2\.5) var(--space-3\.5);
+  --padding-input-md: var(--space-2-5) var(--space-3-5);
   --padding-input-lg: var(--space-3) var(--space-4);
 
   --padding-card: var(--space-6);

@@ -1,0 +1,114 @@
+/* Table Header */
+.header {
+  background-color: var(--color-gray-50);
+  border-bottom: 1px solid var(--color-gray-200);
+}
+
+.header.sticky {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--color-white);
+  box-shadow: 0 1px 0 var(--color-gray-200);
+}
+
+/* Header Row */
+.row {
+  height: var(--spacing-12);
+}
+
+/* Header Cell */
+.cell {
+  padding: var(--spacing-3) var(--spacing-4);
+  text-align: left;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  text-transform: uppercase;
+  letter-spacing: var(--letter-spacing-wider);
+  color: var(--color-gray-500);
+  white-space: nowrap;
+  position: relative;
+  user-select: none;
+}
+
+.cell.sortable {
+  cursor: pointer;
+  transition: all var(--duration-200);
+}
+
+.cell.sortable:hover {
+  background-color: var(--color-gray-100);
+  color: var(--color-gray-700);
+}
+
+.cell.sorted {
+  color: var(--color-gray-900);
+  background-color: var(--color-gray-100);
+}
+
+.cell.resizing {
+  background-color: var(--color-gray-100);
+}
+
+/* Alignment */
+.cell.align-left {
+  text-align: left;
+}
+
+.cell.align-center {
+  text-align: center;
+}
+
+.cell.align-right {
+  text-align: right;
+}
+
+/* Content */
+.content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2);
+}
+
+.text {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Sort Indicator */
+.sortIndicator {
+  display: flex;
+  align-items: center;
+  color: var(--color-gray-400);
+  transition: color var(--duration-200);
+}
+
+.sortIndicator.active {
+  color: var(--color-gray-700);
+}
+
+.sortIcon {
+  width: var(--spacing-4);
+  height: var(--spacing-4);
+}
+
+/* Column Resizer */
+.resizer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  width: 4px;
+  cursor: col-resize;
+  user-select: none;
+  touch-action: none;
+}
+
+.resizer:hover {
+  background-color: var(--color-gray-300);
+}
+
+.resizer:active {
+  background-color: var(--color-primary-500);
+}
