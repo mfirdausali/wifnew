@@ -69,10 +69,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string) => {
     try {
       const response = await api.post('/auth/login', { email, password });
-      const { user, accessToken, refreshToken } = response.data.data;
+      const { user, tokens } = response.data.data;
+      const { accessToken, refreshToken } = tokens;
 
-      Cookies.set('accessToken', accessToken, { expires: 1 }); // 1 day
-      Cookies.set('refreshToken', refreshToken, { expires: 7 }); // 7 days
+      Cookies.set('accessToken', accessToken, { 
+        expires: 1,
+        path: '/',
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production'
+      });
+      Cookies.set('refreshToken', refreshToken, { 
+        expires: 7,
+        path: '/',
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production'
+      });
       
       setUser(user);
       
@@ -101,10 +112,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const register = async (data: RegisterData) => {
     try {
       const response = await api.post('/auth/register', data);
-      const { user, accessToken, refreshToken } = response.data.data;
+      const { user, tokens } = response.data.data;
+      const { accessToken, refreshToken } = tokens;
 
-      Cookies.set('accessToken', accessToken, { expires: 1 });
-      Cookies.set('refreshToken', refreshToken, { expires: 7 });
+      Cookies.set('accessToken', accessToken, { 
+        expires: 1,
+        path: '/',
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production'
+      });
+      Cookies.set('refreshToken', refreshToken, { 
+        expires: 7,
+        path: '/',
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production'
+      });
       
       setUser(user);
       router.push('/dashboard');

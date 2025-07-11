@@ -35,8 +35,9 @@
     "lint:frontend": "cd frontend && npm run lint"
   },
   "devDependencies": {
+    "@types/node": "^20.11.0",
     "concurrently": "^8.2.2",
-    "@types/node": "^20.11.0"
+    "puppeteer": "^24.12.1"
   },
   "engines": {
     "node": ">=20.0.0",
