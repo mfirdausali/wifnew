@@ -11,6 +11,7 @@ const publicRoutes = [
 // Define protected routes and their required roles
 const protectedRoutes = {
   '/admin': ['ADMIN'],
+  '/users': ['ADMIN'],
   '/sales': ['SALES', 'ADMIN'],
   '/finance': ['FINANCE', 'ADMIN'],
   '/operations': ['OPERATIONS', 'ADMIN'],

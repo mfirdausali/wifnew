@@ -304,4 +304,291 @@ export class PermissionService {
       is2faEnabled: user?.twoFactorEnabled,
     };
   }
+
+  // New methods for hierarchical permissions
+  static async getEffectivePermissions(userId: string) {
+    const directPermissions = await this.getUserPermissions(userId);
+    const permissionIds = directPermissions.map(p => p.id);
+
+    // Get all child permissions
+    const childPermissions = await prisma.permission.findMany({
+      where: {
+        path: {
+          contains: permissionIds.join(','),
+        },
+      },
+    });
+
+    // Combine and deduplicate
+    const allPermissions = [...directPermissions, ...childPermissions];
+    const uniquePermissions = Array.from(
+      new Map(allPermissions.map(p => [p.id, p])).values()
+    );
+
+    return uniquePermissions;
+  }
+
+  static async getPermissionHierarchy() {
+    const permissions = await prisma.permission.findMany({
+      orderBy: [
+        { level: 'asc' },
+        { category: 'asc' },
+        { name: 'asc' },
+      ],
+    });
+
+    // Build tree structure
+    const permissionMap = new Map<string, any>();
+    const rootPermissions: any[] = [];
+
+    permissions.forEach(permission => {
+      const node = {
+        ...permission,
+        children: [],
+      };
+      permissionMap.set(permission.id, node);
+
+      if (!permission.parentId) {
+        rootPermissions.push(node);
+      }
+    });
+
+    // Link children to parents
+    permissions.forEach(permission => {
+      if (permission.parentId) {
+        const parent = permissionMap.get(permission.parentId);
+        if (parent) {
+          parent.children.push(permissionMap.get(permission.id));
+        }
+      }
+    });
+
+    return rootPermissions;
+  }
+
+  static async hasResourcePermission(
+    userId: string,
+    resourceType: string,
+    resourceId: string,
+    permissionType: 'read' | 'write' | 'delete'
+  ): Promise<boolean> {
+    // Check if user has direct permission on the resource
+    const permission = `${resourceType}.${permissionType}`;
+    const hasGeneralPermission = await this.hasPermission(userId, permission);
+
+    if (hasGeneralPermission) {
+      return true;
+    }
+
+    // Check if user has ownership or specific access to the resource
+    // This would need to be implemented based on your resource access model
+    // For example, checking if user owns the resource or has been granted access
+    
+    return false;
+  }
+
+  static async hasDepartmentPermission(
+    userId: string,
+    departmentId: string,
+    permissionType: 'manage' | 'view' | 'edit'
+  ): Promise<boolean> {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        department: true,
+        departmentsManaged: true,
+        departmentsDeputy: true,
+      },
+    });
+
+    if (!user) {
+      return false;
+    }
+
+    // Check if user is admin
+    if (user.role === 'ADMIN') {
+      return true;
+    }
+
+    // Check if user manages the department
+    if (permissionType === 'manage') {
+      return user.departmentsManaged.some(d => d.id === departmentId) ||
+             user.departmentsDeputy.some(d => d.id === departmentId);
+    }
+
+    // Check if user belongs to the department
+    if (permissionType === 'view') {
+      return user.departmentId === departmentId ||
+             user.departmentsManaged.some(d => d.id === departmentId) ||
+             user.departmentsDeputy.some(d => d.id === departmentId);
+    }
+
+    // Check specific department permissions
+    const hasPermission = await this.hasPermission(
+      userId,
+      `department.${permissionType}`
+    );
+
+    return hasPermission;
+  }
+
+  static async getUserWithDetails(userId: string) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        role: true,
+        accessLevel: true,
+        twoFactorEnabled: true,
+        status: true,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundError('User not found');
+    }
+
+    return user;
+  }
+
+  static async grantTemporaryPermission(
+    userId: string,
+    permissionCode: string,
+    grantedBy: string,
+    expiresIn: number // hours
+  ) {
+    const permission = await prisma.permission.findUnique({
+      where: { code: permissionCode },
+    });
+
+    if (!permission) {
+      throw new NotFoundError('Permission not found');
+    }
+
+    const expiresAt = new Date();
+    expiresAt.setHours(expiresAt.getHours() + expiresIn);
+
+    await prisma.userPermission.create({
+      data: {
+        userId,
+        permissionId: permission.id,
+        grantedBy,
+        grantedAt: new Date(),
+        expiresAt,
+        grantReason: `Temporary permission granted for ${expiresIn} hours`,
+      },
+    });
+
+    logger.info('Temporary permission granted', {
+      userId,
+      permissionCode,
+      grantedBy,
+      expiresAt,
+    });
+  }
+
+  static async getPermissionAuditLog(
+    userId: string,
+    limit: number = 50
+  ) {
+    const logs = await prisma.userPermission.findMany({
+      where: { userId },
+      include: {
+        permission: true,
+        grantedByUser: {
+          select: {
+            id: true,
+            email: true,
+            fullName: true,
+          },
+        },
+        revokedByUser: {
+          select: {
+            id: true,
+            email: true,
+            fullName: true,
+          },
+        },
+      },
+      orderBy: { grantedAt: 'desc' },
+      take: limit,
+    });
+
+    return logs;
+  }
+
+  static async getExpiredPermissions() {
+    const expired = await prisma.userPermission.findMany({
+      where: {
+        expiresAt: {
+          lte: new Date(),
+        },
+        revokedAt: null,
+      },
+      include: {
+        user: {
+          select: {
+            id: true,
+            email: true,
+            fullName: true,
+          },
+        },
+        permission: true,
+      },
+    });
+
+    return expired;
+  }
+
+  static async cleanupExpiredPermissions() {
+    const result = await prisma.userPermission.updateMany({
+      where: {
+        expiresAt: {
+          lte: new Date(),
+        },
+        revokedAt: null,
+      },
+      data: {
+        revokedAt: new Date(),
+        revokeReason: 'Permission expired',
+      },
+    });
+
+    logger.info('Expired permissions cleaned up', {
+      count: result.count,
+    });
+
+    return result.count;
+  }
+
+  static async clonePermissions(
+    sourceUserId: string,
+    targetUserId: string,
+    clonedBy: string
+  ) {
+    const sourcePermissions = await this.getDirectPermissions(sourceUserId);
+
+    const permissionsToCreate = sourcePermissions.map(sp => ({
+      userId: targetUserId,
+      permissionId: sp.permissionId,
+      grantedBy: clonedBy,
+      grantedAt: new Date(),
+      grantReason: `Cloned from user ${sourceUserId}`,
+      canDelegate: sp.canDelegate,
+      delegationLimit: sp.delegationLimit,
+    }));
+
+    await prisma.userPermission.createMany({
+      data: permissionsToCreate,
+      skipDuplicates: true,
+    });
+
+    logger.info('Permissions cloned', {
+      sourceUserId,
+      targetUserId,
+      clonedBy,
+      count: permissionsToCreate.length,
+    });
+  }
 }

@@ -6,6 +6,7 @@ import { corsOptions } from './config/cors';
 import { errorHandler } from './middleware/error.middleware';
 import { requestLogger } from './middleware/logger.middleware';
 import { generalLimiter } from './middleware/rateLimiter.middleware';
+import { activityLogger, suspiciousActivityCheck } from './middleware/activity.middleware';
 import routes from './routes';
 
 export const app = express();
@@ -26,6 +27,10 @@ app.use(requestLogger);
 
 // Rate limiting
 app.use('/api/', generalLimiter);
+
+// Activity tracking middleware
+app.use(activityLogger);
+app.use(suspiciousActivityCheck);
 
 // Health check
 app.get('/health', (_req, res) => {

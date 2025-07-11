@@ -94,12 +94,20 @@ export interface DepartmentStats {
 export interface ActivityStats {
   totalActivities: number;
   uniqueUsers: number;
-  mostActiveUsers: Array<{
-    userId: string;
-    userName: string;
-    activityCount: number;
+  topActions: Array<{
+    action: string;
+    count: number;
   }>;
-  activityByType: Record<ActivityAction, number>;
+  activityByHour: Array<{
+    hour: number;
+    count: number;
+  }>;
+  activityByDay: Array<{
+    date: string;
+    count: number;
+  }>;
+  errorRate: number;
+  avgResponseTime: number;
 }
 
 export interface ActivityTimeline {
@@ -107,6 +115,57 @@ export interface ActivityTimeline {
   activities: number;
   users: number;
   highlights: string[];
+}
+
+export interface ActivityMetadata {
+  categories: Array<{
+    value: string;
+    label: string;
+  }>;
+  actions: Array<{
+    value: string;
+    label: string;
+    category: string;
+  }>;
+  riskLevels: Array<{
+    value: string;
+    label: string;
+    color: string;
+  }>;
+}
+
+export interface ActivityFeedItem {
+  id: string;
+  user: {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+    avatarUrl?: string;
+  };
+  action: string;
+  actionCategory: string;
+  resourceType?: string;
+  resourceName?: string;
+  createdAt: string;
+  responseStatus?: number;
+  ipAddress: string;
+}
+
+export interface SuspiciousActivityResult {
+  suspicious: boolean;
+  reasons: string[];
+}
+
+export interface ActivityReport {
+  userId: string;
+  period: {
+    from: string;
+    to: string;
+  };
+  summary: ActivityStats;
+  activities: ActivityLog[];
+  generatedAt: string;
 }
 
 // File upload types

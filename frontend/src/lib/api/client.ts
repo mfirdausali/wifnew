@@ -122,10 +122,16 @@ export const API_ENDPOINTS = {
   // Activities
   activities: {
     list: '/activities',
+    myActivities: '/activities/my-activities',
+    metadata: '/activities/metadata',
     userActivities: (userId: string) => `/activities/users/${userId}`,
+    userTimeline: (userId: string) => `/activities/users/${userId}/timeline`,
+    userSuspicious: (userId: string) => `/activities/users/${userId}/suspicious`,
+    userReport: (userId: string) => `/activities/users/${userId}/report`,
     export: '/activities/export',
     stats: '/activities/stats',
     timeline: '/activities/timeline',
+    feed: '/activities/feed',
   },
   
   // Files

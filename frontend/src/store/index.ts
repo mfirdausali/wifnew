@@ -13,6 +13,7 @@ import {
 import storage from 'redux-persist/lib/storage';
 
 // Slices
+import authReducer from './slices/authSlice';
 import usersReducer from './slices/usersSlice';
 import permissionsReducer from './slices/permissionsSlice';
 import departmentsReducer from './slices/departmentsSlice';
@@ -34,6 +35,7 @@ const persistConfig = {
 };
 
 const rootReducer = combineReducers({
+  auth: authReducer,
   users: usersReducer,
   permissions: permissionsReducer,
   departments: departmentsReducer,

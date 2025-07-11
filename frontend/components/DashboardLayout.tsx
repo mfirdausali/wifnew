@@ -32,7 +32,7 @@ export default function DashboardLayout({ children, title }: DashboardLayoutProp
     { name: 'Sales', href: '/sales', icon: DollarSign, roles: ['SALES', 'ADMIN'] },
     { name: 'Finance', href: '/finance', icon: DollarSign, roles: ['FINANCE', 'ADMIN'] },
     { name: 'Operations', href: '/operations', icon: Package, roles: ['OPERATIONS', 'ADMIN'] },
-    { name: 'Users', href: '/admin/users', icon: Users, roles: ['ADMIN'] },
+    { name: 'Users', href: '/users', icon: Users, roles: ['ADMIN'] },
   ];
 
   const filteredNavigation = navigation.filter(item => 

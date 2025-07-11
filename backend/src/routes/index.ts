@@ -6,6 +6,8 @@ import salesRoutes from './sales.routes';
 import financeRoutes from './finance.routes';
 import operationsRoutes from './operations.routes';
 import healthRoutes from './health.routes';
+import permissionRoutes from './permission.routes';
+import activityRoutes from './activity.routes';
 
 const router = Router();
 
@@ -19,6 +21,8 @@ router.use('/admin', adminRoutes);
 router.use('/sales', salesRoutes);
 router.use('/finance', financeRoutes);
 router.use('/operations', operationsRoutes);
+router.use('/permissions', permissionRoutes);
+router.use('/activities', activityRoutes);
 
 // API documentation route
 router.get('/', (_req, res) => {
@@ -77,6 +81,33 @@ router.get('/', (_req, res) => {
         bulkUpdateStatus: 'PATCH /api/operations/orders/bulk-status',
         metrics: 'GET /api/operations/metrics/fulfillment',
         shippingQueue: 'GET /api/operations/shipping/queue',
+      },
+      permissions: {
+        list: 'GET /api/permissions',
+        hierarchy: 'GET /api/permissions/hierarchy',
+        userPermissions: 'GET /api/permissions/users/:userId',
+        grant: 'POST /api/permissions/users/:userId/grant',
+        revoke: 'POST /api/permissions/users/:userId/revoke',
+        grantTemporary: 'POST /api/permissions/users/:userId/grant-temporary',
+        clone: 'POST /api/permissions/clone',
+        audit: 'GET /api/permissions/users/:userId/audit',
+        check: 'GET /api/permissions/users/:userId/check',
+        expired: 'GET /api/permissions/expired',
+        cleanupExpired: 'POST /api/permissions/expired/cleanup',
+        create: 'POST /api/permissions',
+        update: 'PUT /api/permissions/:permissionId',
+        delete: 'DELETE /api/permissions/:permissionId',
+      },
+      activities: {
+        metadata: 'GET /api/activities/metadata',
+        myActivities: 'GET /api/activities/my-activities',
+        list: 'GET /api/activities',
+        stats: 'GET /api/activities/stats',
+        feed: 'GET /api/activities/feed',
+        export: 'GET /api/activities/export',
+        userTimeline: 'GET /api/activities/users/:userId/timeline',
+        checkSuspicious: 'GET /api/activities/users/:userId/suspicious',
+        generateReport: 'POST /api/activities/users/:userId/report',
       },
     },
   });

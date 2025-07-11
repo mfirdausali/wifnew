@@ -9,7 +9,7 @@ import {
   ApiResponse,
   PaginationMeta 
 } from '@/types';
-import { userService, ListUsersParams, BulkUpdateData } from '@/lib/api';
+import { userService, ListUsersParams, BulkUpdateData } from '@/lib/api/userService';
 
 // Fetch users
 export const fetchUsers = createAsyncThunk(

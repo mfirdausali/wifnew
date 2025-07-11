@@ -40,13 +40,24 @@ export interface UpdateUserDTO extends Partial<CreateUserDTO> {
 // Permission types
 export interface Permission {
   id: string;
+  code: string;
   name: string;
-  description: string;
+  description?: string;
   category: string;
-  dependencies: string[];
-  conflicts: string[];
-  requiredRole?: UserRole;
-  requiredAccessLevel?: number;
+  module?: string;
+  parentId?: string;
+  level?: number;
+  path?: string;
+  riskLevel?: 'LOW' | 'MEDIUM' | 'HIGH' | 'CRITICAL';
+  requires2fa?: boolean;
+  requiresApproval?: boolean;
+  defaultForRoles?: string[];
+  excludedFromRoles?: string[];
+  minAccessLevel?: number;
+  isActive?: boolean;
+  isSystem?: boolean;
+  dependencies?: string[];
+  conflicts?: string[];
 }
 
 export interface PermissionGroup {
