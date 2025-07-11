@@ -1,0 +1,56 @@
+.tooltip {
+  @apply fixed z-50;
+  @apply pointer-events-none;
+  @apply animate-in fade-in-0 zoom-in-95;
+  animation-duration: 150ms;
+}
+
+.content {
+  @apply px-3 py-2;
+  @apply text-sm text-white;
+  @apply bg-gray-900 rounded-md;
+  @apply shadow-lg;
+  @apply max-w-xs;
+}
+
+/* Arrow */
+.arrow {
+  @apply absolute w-0 h-0;
+  @apply border-solid border-transparent;
+}
+
+.arrow-top {
+  @apply bottom-[-8px] left-1/2 transform -translate-x-1/2;
+  border-width: 8px 8px 0 8px;
+  border-top-color: rgb(17 24 39); /* gray-900 */
+}
+
+.arrow-right {
+  @apply left-[-8px] top-1/2 transform -translate-y-1/2;
+  border-width: 8px 8px 8px 0;
+  border-right-color: rgb(17 24 39); /* gray-900 */
+}
+
+.arrow-bottom {
+  @apply top-[-8px] left-1/2 transform -translate-x-1/2;
+  border-width: 0 8px 8px 8px;
+  border-bottom-color: rgb(17 24 39); /* gray-900 */
+}
+
+.arrow-left {
+  @apply right-[-8px] top-1/2 transform -translate-y-1/2;
+  border-width: 8px 0 8px 8px;
+  border-left-color: rgb(17 24 39); /* gray-900 */
+}
+
+/* Interactive tooltip */
+.tooltip:has(.content:hover) {
+  @apply pointer-events-auto;
+}
+
+/* Dark mode is default for tooltips */
+@media (prefers-color-scheme: light) {
+  .content {
+    @apply bg-gray-900 text-white;
+  }
+}

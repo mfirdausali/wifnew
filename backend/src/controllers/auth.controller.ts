@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import { AuthService } from '@services/auth.service';
-import { TokenService } from '@services/token.service';
-import { getClientIp, getUserAgent } from '@utils/helpers';
-import { HTTP_STATUS } from '@utils/constants';
+import { AuthService } from '../services/auth.service';
+import { TokenService } from '../services/token.service';
+import { getClientIp, getUserAgent } from '../utils/helpers';
+import { HTTP_STATUS } from '../utils/constants';
 
 interface AuthRequest extends Request {
   user?: {

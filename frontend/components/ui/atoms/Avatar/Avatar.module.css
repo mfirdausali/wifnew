@@ -1,0 +1,163 @@
+.container {
+  @apply relative inline-flex items-center justify-center;
+  @apply overflow-hidden;
+  @apply bg-gray-200;
+  @apply flex-shrink-0;
+}
+
+/* Sizes */
+.xs {
+  @apply w-6 h-6 text-xs;
+}
+
+.sm {
+  @apply w-8 h-8 text-sm;
+}
+
+.md {
+  @apply w-10 h-10 text-base;
+}
+
+.lg {
+  @apply w-12 h-12 text-lg;
+}
+
+.xl {
+  @apply w-14 h-14 text-xl;
+}
+
+.2xl {
+  @apply w-16 h-16 text-2xl;
+}
+
+/* Shapes */
+.circle {
+  @apply rounded-full;
+}
+
+.square {
+  @apply rounded-lg;
+}
+
+/* Clickable */
+.clickable {
+  @apply cursor-pointer transition-opacity duration-200;
+  @apply hover:opacity-80;
+}
+
+.clickable:focus-visible {
+  @apply ring-2 ring-offset-2 ring-primary-500 outline-none;
+}
+
+/* Image */
+.image {
+  @apply w-full h-full object-cover;
+}
+
+/* Fallback */
+.fallback {
+  @apply w-full h-full flex items-center justify-center;
+  @apply text-white font-medium select-none;
+}
+
+.fallbackIcon {
+  @apply w-3/5 h-3/5;
+}
+
+/* Status indicator */
+.status {
+  @apply absolute w-3 h-3 rounded-full;
+  @apply border-2 border-white;
+}
+
+.xs .status {
+  @apply w-2 h-2 border;
+}
+
+.sm .status {
+  @apply w-2.5 h-2.5;
+}
+
+.lg .status,
+.xl .status,
+.2xl .status {
+  @apply w-3.5 h-3.5;
+}
+
+/* Status positions */
+.status-top-right {
+  @apply top-0 right-0;
+}
+
+.status-bottom-right {
+  @apply bottom-0 right-0;
+}
+
+.status-top-left {
+  @apply top-0 left-0;
+}
+
+.status-bottom-left {
+  @apply bottom-0 left-0;
+}
+
+/* Status colors */
+.status-online {
+  @apply bg-green-500;
+}
+
+.status-offline {
+  @apply bg-gray-400;
+}
+
+.status-away {
+  @apply bg-yellow-500;
+}
+
+.status-busy {
+  @apply bg-red-500;
+}
+
+/* Avatar Group */
+.group {
+  @apply inline-flex items-center;
+}
+
+.groupAvatar {
+  @apply border-2 border-white;
+}
+
+.group-tight .groupAvatar:not(:first-child) {
+  @apply -ml-2;
+}
+
+.group-normal .groupAvatar:not(:first-child) {
+  @apply -ml-1;
+}
+
+.group-loose .groupAvatar:not(:first-child) {
+  @apply ml-1;
+}
+
+.moreAvatar {
+  @apply cursor-default;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .container {
+    @apply bg-gray-700;
+  }
+  
+  .status {
+    @apply border-gray-900;
+  }
+  
+  .groupAvatar {
+    @apply border-gray-900;
+  }
+  
+  .moreAvatar .fallback {
+    @apply bg-gray-600 text-gray-200;
+  }
+}

@@ -1,12 +1,13 @@
 import jwt, { Secret, SignOptions } from 'jsonwebtoken';
 import { User } from '@prisma/client';
-import { env } from '@config/env';
-import { prisma } from '@config/database';
-import { redis } from '@config/redis';
-import { UnauthorizedError } from '@utils/errors';
-import { TOKEN_TYPES, REDIS_KEYS } from '@utils/constants';
-import { generateRandomString } from '@utils/helpers';
-import logger from '@utils/logger';
+import crypto from 'crypto';
+import { env } from '../config/env';
+import { prisma } from '../config/database';
+import { redis } from '../config/redis';
+import { UnauthorizedError } from '../utils/errors';
+import { TOKEN_TYPES, REDIS_KEYS } from '../utils/constants';
+import { generateRandomString } from '../utils/helpers';
+import logger from '../utils/logger';
 
 interface TokenPayload {
   userId: string;
@@ -179,5 +180,55 @@ export class TokenService {
     } catch {
       return null;
     }
+  }
+
+  static async generateVerificationToken(userId: string): Promise<string> {
+    const token = crypto.randomBytes(32).toString('hex');
+    
+    // Store in database with expiry
+    await prisma.emailVerification.create({
+      data: {
+        userId,
+        token,
+        expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours
+      },
+    });
+
+    logger.info('Verification token generated', { userId });
+
+    return token;
+  }
+
+  static async verifyEmailToken(token: string): Promise<string> {
+    const verification = await prisma.emailVerification.findFirst({
+      where: {
+        token,
+        used: false,
+        expiresAt: { gt: new Date() },
+      },
+    });
+
+    if (!verification) {
+      throw new UnauthorizedError('Invalid or expired verification token');
+    }
+
+    // Mark as used
+    await prisma.emailVerification.update({
+      where: { id: verification.id },
+      data: { used: true },
+    });
+
+    // Mark user email as verified
+    await prisma.user.update({
+      where: { id: verification.userId },
+      data: {
+        emailVerified: true,
+        emailVerifiedAt: new Date(),
+      },
+    });
+
+    logger.info('Email verified', { userId: verification.userId });
+
+    return verification.userId;
   }
 }

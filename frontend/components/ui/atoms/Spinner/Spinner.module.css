@@ -1,0 +1,47 @@
+.spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Sizes */
+.xs {
+  width: 12px;
+  height: 12px;
+}
+
+.sm {
+  width: 16px;
+  height: 16px;
+}
+
+.md {
+  width: 20px;
+  height: 20px;
+}
+
+.lg {
+  width: 24px;
+  height: 24px;
+}
+
+.xl {
+  width: 32px;
+  height: 32px;
+}
+
+.track {
+  fill: none;
+}
+
+.indicator {
+  fill: none;
+  stroke-linecap: round;
+}

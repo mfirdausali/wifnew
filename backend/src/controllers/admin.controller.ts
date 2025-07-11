@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import { prisma } from '@config/database';
-import { redis } from '@config/redis';
-import { HTTP_STATUS } from '@utils/constants';
-import { getPaginationParams, createPaginatedResponse } from '@utils/helpers';
+import { prisma } from '../config/database';
+import { redis } from '../config/redis';
+import { HTTP_STATUS } from '../utils/constants';
+import { getPaginationParams, createPaginatedResponse } from '../utils/helpers';
 
 export class AdminController {
   static async getDashboardStats(req: Request, res: Response, next: NextFunction) {

@@ -1,0 +1,165 @@
+.field {
+  @apply relative;
+}
+
+/* Spacing variants */
+.spacing-compact {
+  @apply space-y-1;
+}
+
+.spacing-normal {
+  @apply space-y-2;
+}
+
+.spacing-relaxed {
+  @apply space-y-3;
+}
+
+/* Layout */
+.fullWidth {
+  @apply w-full;
+}
+
+.inline {
+  @apply flex items-start gap-4;
+}
+
+.inline .label {
+  @apply pt-2 min-w-[120px] text-right;
+}
+
+.inline .content {
+  @apply flex-1;
+}
+
+/* Label positions */
+.label-left {
+  @apply flex items-start gap-4;
+}
+
+.label-left .label {
+  @apply pt-2 min-w-[120px] text-right;
+}
+
+.label-left .content {
+  @apply flex-1;
+}
+
+/* Label */
+.label {
+  @apply block text-sm font-medium text-gray-700;
+  @apply transition-colors duration-200;
+}
+
+.required .requiredStar {
+  @apply text-red-500 ml-1;
+}
+
+.requiredText {
+  @apply text-xs text-gray-500 ml-2 font-normal;
+}
+
+.optionalText {
+  @apply text-xs text-gray-500 ml-2 font-normal;
+}
+
+/* Floating label */
+.floating {
+  @apply absolute left-0 top-2 px-1;
+  @apply pointer-events-none;
+  @apply transition-all duration-200;
+  @apply transform origin-top-left;
+}
+
+.content:focus-within .floating,
+.content:has(input:not(:placeholder-shown)) .floating,
+.content:has(select:not([value=""])) .floating,
+.content:has(textarea:not(:placeholder-shown)) .floating {
+  @apply -translate-y-6 scale-75;
+  @apply text-primary-600;
+}
+
+/* Content */
+.content {
+  @apply relative;
+}
+
+/* Character count */
+.characterCount {
+  @apply absolute right-0 -bottom-5;
+  @apply text-xs text-gray-500;
+}
+
+.overLimit {
+  @apply text-red-500 font-medium;
+}
+
+/* Helper text */
+.helper {
+  @apply text-sm mt-1;
+  @apply transition-colors duration-200;
+}
+
+.helper.error {
+  @apply text-red-600;
+}
+
+.helper.warning {
+  @apply text-yellow-600;
+}
+
+.helper.success {
+  @apply text-green-600;
+}
+
+/* Hint */
+.hint {
+  @apply text-sm text-gray-500 mt-1;
+  @apply flex items-start gap-1;
+}
+
+.hintIcon {
+  @apply w-4 h-4 flex-shrink-0 mt-0.5;
+}
+
+/* Description */
+.description {
+  @apply text-sm text-gray-600 mt-2;
+  @apply leading-relaxed;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .label {
+    @apply text-gray-200;
+  }
+  
+  .requiredText,
+  .optionalText {
+    @apply text-gray-400;
+  }
+  
+  .hint {
+    @apply text-gray-400;
+  }
+  
+  .description {
+    @apply text-gray-300;
+  }
+  
+  .characterCount {
+    @apply text-gray-400;
+  }
+  
+  .helper.error {
+    @apply text-red-400;
+  }
+  
+  .helper.warning {
+    @apply text-yellow-400;
+  }
+  
+  .helper.success {
+    @apply text-green-400;
+  }
+}

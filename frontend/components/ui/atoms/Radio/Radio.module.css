@@ -1,0 +1,214 @@
+.container {
+  @apply relative;
+}
+
+.radioWrapper {
+  @apply flex items-center;
+}
+
+.input {
+  @apply sr-only;
+}
+
+.radio {
+  @apply relative flex items-center justify-center;
+  @apply border-2 rounded-full;
+  @apply transition-all duration-200;
+  @apply cursor-pointer;
+  @apply flex-shrink-0;
+}
+
+/* Sizes */
+.sm {
+  @apply w-4 h-4;
+}
+
+.md {
+  @apply w-5 h-5;
+}
+
+.lg {
+  @apply w-6 h-6;
+}
+
+/* Dot sizes */
+.sm .dot {
+  @apply w-1.5 h-1.5;
+}
+
+.md .dot {
+  @apply w-2 h-2;
+}
+
+.lg .dot {
+  @apply w-2.5 h-2.5;
+}
+
+/* Variants */
+.default {
+  @apply border-gray-300 bg-white;
+}
+
+.default:hover:not(.disabled) {
+  @apply border-gray-400;
+}
+
+.input:checked + .default {
+  @apply border-primary-600;
+}
+
+.input:checked + .default .dot {
+  @apply bg-primary-600;
+}
+
+.input:focus-visible + .radio {
+  @apply ring-2 ring-offset-2 ring-primary-500;
+}
+
+.primary {
+  @apply border-primary-300 bg-primary-50;
+}
+
+.input:checked + .primary {
+  @apply border-primary-600;
+}
+
+.input:checked + .primary .dot {
+  @apply bg-primary-600;
+}
+
+.success {
+  @apply border-green-300 bg-green-50;
+}
+
+.input:checked + .success {
+  @apply border-green-600;
+}
+
+.input:checked + .success .dot {
+  @apply bg-green-600;
+}
+
+.danger {
+  @apply border-red-300 bg-red-50;
+}
+
+.input:checked + .danger {
+  @apply border-red-600;
+}
+
+.input:checked + .danger .dot {
+  @apply bg-red-600;
+}
+
+/* States */
+.error {
+  @apply border-red-500;
+}
+
+.disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+/* Dot */
+.dot {
+  @apply rounded-full;
+  @apply scale-0 opacity-0;
+  @apply transition-all duration-200;
+}
+
+.input:checked + .radio .dot {
+  @apply scale-100 opacity-100;
+}
+
+/* Label */
+.label {
+  @apply ml-2 cursor-pointer select-none;
+  @apply transition-colors duration-200;
+}
+
+.label-sm {
+  @apply text-sm;
+}
+
+.label-md {
+  @apply text-base;
+}
+
+.label-lg {
+  @apply text-lg;
+}
+
+.input:disabled ~ .label {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+/* Helper */
+.helper {
+  @apply mt-1 ml-7 text-sm text-gray-500;
+}
+
+.errorText {
+  @apply text-red-500;
+}
+
+/* Radio Group */
+.groupContainer {
+  @apply relative;
+}
+
+.groupLabel {
+  @apply block text-sm font-medium text-gray-700 mb-2;
+}
+
+.groupOptions {
+  @apply flex gap-4;
+}
+
+.vertical {
+  @apply flex-col gap-2;
+}
+
+.horizontal {
+  @apply flex-row gap-4;
+}
+
+.groupHelper {
+  @apply mt-2 text-sm text-gray-500;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .default {
+    @apply border-gray-600 bg-gray-800;
+  }
+  
+  .default:hover:not(.disabled) {
+    @apply border-gray-500;
+  }
+  
+  .primary {
+    @apply border-primary-700 bg-primary-900/20;
+  }
+  
+  .success {
+    @apply border-green-700 bg-green-900/20;
+  }
+  
+  .danger {
+    @apply border-red-700 bg-red-900/20;
+  }
+  
+  .label {
+    @apply text-gray-200;
+  }
+  
+  .helper,
+  .groupHelper {
+    @apply text-gray-400;
+  }
+  
+  .groupLabel {
+    @apply text-gray-200;
+  }
+}

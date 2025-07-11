@@ -1,16 +1,16 @@
 import bcrypt from 'bcryptjs';
-import { User, UserRole } from '@prisma/client';
-import { prisma } from '@config/database';
+import { User, UserRole, UserStatus } from '@prisma/client';
+import { prisma } from '../config/database';
 import { TokenService } from './token.service';
 import { 
   UnauthorizedError, 
   ConflictError, 
   NotFoundError,
   ValidationError 
-} from '@utils/errors';
-import { sanitizeUser, isStrongPassword } from '@utils/helpers';
-import { AUDIT_ACTIONS } from '@utils/constants';
-import logger from '@utils/logger';
+} from '../utils/errors';
+import { sanitizeUser, isStrongPassword } from '../utils/helpers';
+import { AUDIT_ACTIONS } from '../utils/constants';
+import logger from '../utils/logger';
 
 interface RegisterData {
   email: string;
@@ -35,7 +35,7 @@ interface LoginResponse {
 
 export class AuthService {
   static async register(data: RegisterData): Promise<User> {
-    const { email, password, firstName, lastName, role = UserRole.SALES } = data;
+    const { email, password, firstName, lastName, role = UserRole.SALES_MANAGER } = data;
 
     // Validate password strength
     if (!isStrongPassword(password)) {
@@ -60,10 +60,13 @@ export class AuthService {
     const user = await prisma.user.create({
       data: {
         email,
-        password: hashedPassword,
+        emailNormalized: email.toLowerCase(),
+        passwordHash: hashedPassword,
         firstName,
         lastName,
         role,
+        accessLevel: 1, // Default access level
+        status: UserStatus.ACTIVE,
       },
     });
 
@@ -72,9 +75,10 @@ export class AuthService {
       data: {
         userId: user.id,
         action: AUDIT_ACTIONS.USER_REGISTER,
-        resource: 'users',
-        resourceId: user.id,
+        targetUserId: user.id,
         details: { email, role },
+        ipAddress: '',
+        userAgent: '',
       },
     });
 
@@ -96,12 +100,12 @@ export class AuthService {
     }
 
     // Check user status
-    if (user.status !== 'ACTIVE') {
+    if (user.status !== UserStatus.ACTIVE) {
       throw new UnauthorizedError(`Account is ${user.status.toLowerCase()}`);
     }
 
     // Verify password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await bcrypt.compare(password, user.passwordHash);
     if (!isPasswordValid) {
       throw new UnauthorizedError('Invalid email or password');
     }
@@ -116,11 +120,12 @@ export class AuthService {
     const tokens = await TokenService.generateTokenPair(user);
 
     // Create session
-    await prisma.session.create({
+    await prisma.userSession.create({
       data: {
         userId: user.id,
-        ipAddress,
-        userAgent,
+        sessionToken: tokens.accessToken,
+        ipAddress: ipAddress || '',
+        userAgent: userAgent || '',
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
       },
     });
@@ -130,9 +135,8 @@ export class AuthService {
       data: {
         userId: user.id,
         action: AUDIT_ACTIONS.USER_LOGIN,
-        resource: 'auth',
-        ipAddress,
-        userAgent,
+        ipAddress: ipAddress || '',
+        userAgent: userAgent || '',
         details: { email },
       },
     });
@@ -149,10 +153,10 @@ export class AuthService {
     // Revoke the token
     await TokenService.revokeToken(token);
 
-    // Mark user sessions as inactive
-    await prisma.session.updateMany({
-      where: { userId, isActive: true },
-      data: { isActive: false },
+    // Mark user sessions as revoked
+    await prisma.userSession.updateMany({
+      where: { userId, revokedAt: null },
+      data: { revokedAt: new Date() },
     });
 
     // Create audit log
@@ -160,7 +164,8 @@ export class AuthService {
       data: {
         userId,
         action: AUDIT_ACTIONS.USER_LOGOUT,
-        resource: 'auth',
+        ipAddress: '',
+        userAgent: '',
       },
     });
 
@@ -189,7 +194,7 @@ export class AuthService {
     }
 
     // Verify current password
-    const isPasswordValid = await bcrypt.compare(currentPassword, user.password);
+    const isPasswordValid = await bcrypt.compare(currentPassword, user.passwordHash);
     if (!isPasswordValid) {
       throw new UnauthorizedError('Current password is incorrect');
     }
@@ -200,7 +205,11 @@ export class AuthService {
     // Update password
     await prisma.user.update({
       where: { id: userId },
-      data: { password: hashedPassword },
+      data: { 
+        passwordHash: hashedPassword,
+        passwordChangedAt: new Date(),
+        passwordExpiresAt: new Date(Date.now() + 90 * 24 * 60 * 60 * 1000), // 90 days
+      },
     });
 
     // Revoke all user tokens
@@ -211,8 +220,9 @@ export class AuthService {
       data: {
         userId,
         action: AUDIT_ACTIONS.PASSWORD_CHANGE,
-        resource: 'users',
-        resourceId: userId,
+        targetUserId: userId,
+        ipAddress: '',
+        userAgent: '',
       },
     });
 

@@ -1,0 +1,34 @@
+.form {
+  @apply relative;
+}
+
+/* Layout variants */
+.layout-vertical {
+  @apply flex flex-col;
+}
+
+.layout-horizontal {
+  @apply flex flex-col;
+}
+
+.layout-inline {
+  @apply flex flex-wrap items-end;
+}
+
+/* Spacing variants */
+.spacing-compact {
+  @apply gap-4;
+}
+
+.spacing-normal {
+  @apply gap-6;
+}
+
+.spacing-relaxed {
+  @apply gap-8;
+}
+
+/* Full width */
+.fullWidth {
+  @apply w-full;
+}

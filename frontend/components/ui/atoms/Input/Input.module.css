@@ -1,0 +1,254 @@
+.inputWrapper {
+  @apply relative;
+}
+
+.inputContainer {
+  @apply relative flex items-center;
+  @apply transition-all duration-200;
+}
+
+.input {
+  @apply w-full bg-transparent;
+  @apply transition-all duration-200;
+  @apply placeholder-gray-400;
+  @apply focus:outline-none;
+  
+  /* Remove default styling */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+/* Remove number input spinners */
+.input[type="number"]::-webkit-inner-spin-button,
+.input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Variants */
+.outline {
+  @apply border border-gray-300 rounded-md;
+  @apply hover:border-gray-400;
+  @apply focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/20;
+}
+
+.filled {
+  @apply bg-gray-100 border border-transparent rounded-md;
+  @apply hover:bg-gray-200;
+  @apply focus-within:bg-white focus-within:border-primary-500 focus-within:ring-2 focus-within:ring-primary-500/20;
+}
+
+.unstyled {
+  @apply border-0;
+}
+
+/* Sizes */
+.sm .input {
+  @apply text-sm py-1.5 px-3;
+  min-height: 32px;
+}
+
+.md .input {
+  @apply text-base py-2 px-4;
+  min-height: 40px;
+}
+
+.lg .input {
+  @apply text-lg py-2.5 px-5;
+  min-height: 48px;
+}
+
+/* States */
+.error.outline {
+  @apply border-red-500;
+  @apply focus-within:border-red-500 focus-within:ring-red-500/20;
+}
+
+.error.filled {
+  @apply bg-red-50 border-red-500;
+  @apply focus-within:bg-red-50 focus-within:border-red-500 focus-within:ring-red-500/20;
+}
+
+.success.outline {
+  @apply border-green-500;
+  @apply focus-within:border-green-500 focus-within:ring-green-500/20;
+}
+
+.success.filled {
+  @apply bg-green-50 border-green-500;
+  @apply focus-within:bg-green-50 focus-within:border-green-500 focus-within:ring-green-500/20;
+}
+
+.warning.outline {
+  @apply border-yellow-500;
+  @apply focus-within:border-yellow-500 focus-within:ring-yellow-500/20;
+}
+
+.warning.filled {
+  @apply bg-yellow-50 border-yellow-500;
+  @apply focus-within:bg-yellow-50 focus-within:border-yellow-500 focus-within:ring-yellow-500/20;
+}
+
+.disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.disabled .input {
+  @apply cursor-not-allowed;
+}
+
+.loading {
+  @apply pointer-events-none;
+}
+
+/* Icons and Elements */
+.leftIcon,
+.rightIcon {
+  @apply absolute top-1/2 transform -translate-y-1/2;
+  @apply text-gray-400 pointer-events-none;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.leftIcon {
+  @apply left-3;
+}
+
+.rightIcon {
+  @apply right-3;
+}
+
+.hasLeftIcon .input {
+  @apply pl-10;
+}
+
+.hasRightIcon .input {
+  @apply pr-10;
+}
+
+.hasLeftElement .input {
+  @apply pl-12;
+}
+
+.hasRightElement .input {
+  @apply pr-12;
+}
+
+.leftElement,
+.rightElement {
+  @apply absolute top-1/2 transform -translate-y-1/2;
+  @apply flex items-center;
+}
+
+.leftElement {
+  @apply left-3;
+}
+
+.rightElement {
+  @apply right-3;
+}
+
+/* Addons */
+.addon {
+  @apply flex items-center px-3;
+  @apply bg-gray-50 border border-gray-300;
+  @apply text-gray-600 text-sm;
+}
+
+.leftAddon {
+  @apply rounded-l-md border-r-0;
+}
+
+.rightAddon {
+  @apply rounded-r-md border-l-0;
+}
+
+.hasLeftAddon .inputContainer {
+  @apply rounded-l-none;
+}
+
+.hasRightAddon .inputContainer {
+  @apply rounded-r-none;
+}
+
+/* Clear button */
+.clearButton {
+  @apply absolute right-3 top-1/2 transform -translate-y-1/2;
+  @apply p-1 rounded-full;
+  @apply text-gray-400 hover:text-gray-600;
+  @apply hover:bg-gray-100;
+  @apply transition-colors duration-200;
+  @apply cursor-pointer;
+}
+
+.hasRightIcon .clearButton {
+  @apply right-10;
+}
+
+/* Helper text */
+.helper {
+  @apply mt-1 text-sm;
+}
+
+.helperText {
+  @apply text-gray-500;
+}
+
+.errorText {
+  @apply text-red-500;
+}
+
+.successText {
+  @apply text-green-500;
+}
+
+.warningText {
+  @apply text-yellow-600;
+}
+
+/* Full width */
+.fullWidth {
+  @apply w-full;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .input {
+    @apply text-gray-100 placeholder-gray-500;
+  }
+  
+  .outline {
+    @apply border-gray-600 bg-gray-900;
+    @apply hover:border-gray-500;
+    @apply focus-within:border-primary-400;
+  }
+  
+  .filled {
+    @apply bg-gray-800 text-gray-100;
+    @apply hover:bg-gray-700;
+    @apply focus-within:bg-gray-800;
+  }
+  
+  .addon {
+    @apply bg-gray-800 border-gray-600 text-gray-300;
+  }
+  
+  .leftIcon,
+  .rightIcon {
+    @apply text-gray-500;
+  }
+  
+  .clearButton {
+    @apply text-gray-500 hover:text-gray-300;
+    @apply hover:bg-gray-700;
+  }
+  
+  .helperText {
+    @apply text-gray-400;
+  }
+}

@@ -1,0 +1,240 @@
+.container {
+  @apply relative;
+}
+
+.fullWidth {
+  @apply w-full;
+}
+
+.selectWrapper {
+  @apply relative;
+}
+
+.select {
+  @apply w-full flex items-center justify-between;
+  @apply transition-all duration-200;
+  @apply cursor-pointer;
+  @apply focus:outline-none;
+}
+
+/* Variants */
+.outline {
+  @apply border border-gray-300 rounded-md bg-white;
+  @apply hover:border-gray-400;
+  @apply focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20;
+}
+
+.filled {
+  @apply bg-gray-100 border border-transparent rounded-md;
+  @apply hover:bg-gray-200;
+  @apply focus:bg-white focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20;
+}
+
+.unstyled {
+  @apply border-0 bg-transparent;
+}
+
+/* Sizes */
+.sm {
+  @apply text-sm py-1.5 px-3;
+  min-height: 32px;
+}
+
+.md {
+  @apply text-base py-2 px-4;
+  min-height: 40px;
+}
+
+.lg {
+  @apply text-lg py-2.5 px-5;
+  min-height: 48px;
+}
+
+/* States */
+.error.outline {
+  @apply border-red-500;
+  @apply focus:border-red-500 focus:ring-red-500/20;
+}
+
+.success.outline {
+  @apply border-green-500;
+  @apply focus:border-green-500 focus:ring-green-500/20;
+}
+
+.warning.outline {
+  @apply border-yellow-500;
+  @apply focus:border-yellow-500 focus:ring-yellow-500/20;
+}
+
+.disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.loading {
+  @apply pointer-events-none;
+}
+
+.open.outline {
+  @apply border-primary-500 ring-2 ring-primary-500/20;
+}
+
+/* Content */
+.value {
+  @apply flex-1 text-left truncate;
+}
+
+.leftIcon {
+  @apply mr-2 flex-shrink-0;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.actions {
+  @apply flex items-center gap-1 ml-2;
+}
+
+.clearButton {
+  @apply p-1 rounded hover:bg-gray-100;
+  @apply transition-colors duration-200;
+}
+
+.chevron {
+  @apply flex-shrink-0 transition-transform duration-200;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.rotated {
+  @apply rotate-180;
+}
+
+/* Dropdown */
+.dropdown {
+  @apply absolute z-50 w-full mt-1;
+  @apply bg-white border border-gray-200 rounded-md shadow-lg;
+  @apply overflow-hidden;
+  max-height: 300px;
+}
+
+.searchWrapper {
+  @apply p-2 border-b border-gray-200;
+}
+
+.optionsList {
+  @apply overflow-y-auto;
+  max-height: 250px;
+}
+
+.empty {
+  @apply py-8 text-center text-gray-500;
+}
+
+.groupLabel {
+  @apply px-3 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wider;
+  @apply bg-gray-50;
+}
+
+.option {
+  @apply w-full flex items-center px-3 py-2;
+  @apply text-left transition-colors duration-150;
+  @apply hover:bg-gray-50;
+}
+
+.option:focus {
+  @apply outline-none;
+}
+
+.selected {
+  @apply bg-primary-50 text-primary-700;
+}
+
+.highlighted {
+  @apply bg-gray-100;
+}
+
+.disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.optionIcon {
+  @apply mr-2 flex-shrink-0;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.optionContent {
+  @apply flex-1 min-w-0;
+}
+
+.optionLabel {
+  @apply block truncate;
+}
+
+.optionDescription {
+  @apply text-sm text-gray-500 truncate;
+}
+
+.checkIcon {
+  @apply ml-2 flex-shrink-0 text-primary-600;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+/* Helper */
+.helper {
+  @apply mt-1 text-sm;
+}
+
+.errorText {
+  @apply text-red-500;
+}
+
+.successText {
+  @apply text-green-500;
+}
+
+.warningText {
+  @apply text-yellow-600;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .outline {
+    @apply bg-gray-900 border-gray-600;
+    @apply hover:border-gray-500;
+  }
+  
+  .filled {
+    @apply bg-gray-800;
+    @apply hover:bg-gray-700;
+  }
+  
+  .dropdown {
+    @apply bg-gray-800 border-gray-700;
+  }
+  
+  .groupLabel {
+    @apply bg-gray-900 text-gray-400;
+  }
+  
+  .option {
+    @apply text-gray-100;
+    @apply hover:bg-gray-700;
+  }
+  
+  .selected {
+    @apply bg-primary-900/20 text-primary-400;
+  }
+  
+  .highlighted {
+    @apply bg-gray-700;
+  }
+  
+  .optionDescription {
+    @apply text-gray-400;
+  }
+  
+  .clearButton {
+    @apply hover:bg-gray-700;
+  }
+}

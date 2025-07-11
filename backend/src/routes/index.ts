@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import authRoutes from './auth.routes';
-import userRoutes from './user.routes';
+import usersRoutes from './users.routes';
 import adminRoutes from './admin.routes';
 import salesRoutes from './sales.routes';
 import financeRoutes from './finance.routes';
@@ -14,7 +14,7 @@ router.use('/health', healthRoutes);
 
 // API routes
 router.use('/auth', authRoutes);
-router.use('/users', userRoutes);
+router.use('/users', usersRoutes);
 router.use('/admin', adminRoutes);
 router.use('/sales', salesRoutes);
 router.use('/finance', financeRoutes);
@@ -39,12 +39,14 @@ router.get('/', (_req, res) => {
       users: {
         list: 'GET /api/users',
         create: 'POST /api/users',
-        get: 'GET /api/users/:userId',
-        update: 'PUT /api/users/:userId',
-        updateRole: 'PATCH /api/users/:userId/role',
-        updateStatus: 'PATCH /api/users/:userId/status',
-        delete: 'DELETE /api/users/:userId',
-        stats: 'GET /api/users/stats',
+        get: 'GET /api/users/:id',
+        update: 'PUT /api/users/:id',
+        delete: 'DELETE /api/users/:id',
+        updateStatus: 'PATCH /api/users/:id/status',
+        updateRole: 'PATCH /api/users/:id/role',
+        bulkUpdate: 'POST /api/users/bulk-update',
+        export: 'GET /api/users/export',
+        import: 'POST /api/users/import',
       },
       admin: {
         dashboard: 'GET /api/admin/dashboard/stats',

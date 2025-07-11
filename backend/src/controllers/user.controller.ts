@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
-import { UserService } from '@services/user.service';
-import { getPaginationParams, createPaginatedResponse } from '@utils/helpers';
-import { HTTP_STATUS } from '@utils/constants';
+import { UserService } from '../services/user.service';
+import { getPaginationParams, createPaginatedResponse } from '../utils/helpers';
+import { HTTP_STATUS } from '../utils/constants';
 import { UserRole } from '@prisma/client';
 
 interface AuthRequest extends Request {

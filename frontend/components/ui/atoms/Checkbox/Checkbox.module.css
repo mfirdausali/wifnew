@@ -1,0 +1,159 @@
+.container {
+  @apply relative;
+}
+
+.checkboxWrapper {
+  @apply flex items-center;
+}
+
+.input {
+  @apply sr-only;
+}
+
+.checkbox {
+  @apply relative flex items-center justify-center;
+  @apply border-2 rounded;
+  @apply transition-all duration-200;
+  @apply cursor-pointer;
+  @apply flex-shrink-0;
+}
+
+/* Sizes */
+.sm {
+  @apply w-4 h-4;
+}
+
+.md {
+  @apply w-5 h-5;
+}
+
+.lg {
+  @apply w-6 h-6;
+}
+
+/* Variants */
+.default {
+  @apply border-gray-300 bg-white;
+}
+
+.default:hover:not(.disabled) {
+  @apply border-gray-400;
+}
+
+.input:checked + .default {
+  @apply bg-primary-600 border-primary-600;
+}
+
+.input:focus-visible + .checkbox {
+  @apply ring-2 ring-offset-2 ring-primary-500;
+}
+
+.primary {
+  @apply border-primary-300 bg-primary-50;
+}
+
+.input:checked + .primary {
+  @apply bg-primary-600 border-primary-600;
+}
+
+.success {
+  @apply border-green-300 bg-green-50;
+}
+
+.input:checked + .success {
+  @apply bg-green-600 border-green-600;
+}
+
+.danger {
+  @apply border-red-300 bg-red-50;
+}
+
+.input:checked + .danger {
+  @apply bg-red-600 border-red-600;
+}
+
+/* States */
+.error {
+  @apply border-red-500;
+}
+
+.disabled {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+.indeterminate {
+  @apply bg-primary-600 border-primary-600;
+}
+
+/* Icon */
+.icon {
+  @apply text-white opacity-0 scale-75;
+  @apply transition-all duration-200;
+}
+
+.input:checked + .checkbox .icon,
+.indeterminate .icon {
+  @apply opacity-100 scale-100;
+}
+
+/* Label */
+.label {
+  @apply ml-2 cursor-pointer select-none;
+  @apply transition-colors duration-200;
+}
+
+.label-sm {
+  @apply text-sm;
+}
+
+.label-md {
+  @apply text-base;
+}
+
+.label-lg {
+  @apply text-lg;
+}
+
+.input:disabled ~ .label {
+  @apply opacity-50 cursor-not-allowed;
+}
+
+/* Helper */
+.helper {
+  @apply mt-1 ml-7 text-sm text-gray-500;
+}
+
+.errorText {
+  @apply text-red-500;
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  .default {
+    @apply border-gray-600 bg-gray-800;
+  }
+  
+  .default:hover:not(.disabled) {
+    @apply border-gray-500;
+  }
+  
+  .primary {
+    @apply border-primary-700 bg-primary-900/20;
+  }
+  
+  .success {
+    @apply border-green-700 bg-green-900/20;
+  }
+  
+  .danger {
+    @apply border-red-700 bg-red-900/20;
+  }
+  
+  .label {
+    @apply text-gray-200;
+  }
+  
+  .helper {
+    @apply text-gray-400;
+  }
+}

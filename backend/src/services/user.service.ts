@@ -1,15 +1,15 @@
 import { User, UserRole, UserStatus, Prisma } from '@prisma/client';
-import { prisma } from '@config/database';
+import { prisma } from '../config/database';
 import bcrypt from 'bcryptjs';
 import { 
   NotFoundError, 
   ConflictError, 
   ValidationError,
   ForbiddenError 
-} from '@utils/errors';
-import { sanitizeUser, isStrongPassword } from '@utils/helpers';
-import { AUDIT_ACTIONS } from '@utils/constants';
-import logger from '@utils/logger';
+} from '../utils/errors';
+import { sanitizeUser, isStrongPassword } from '../utils/helpers';
+import { AUDIT_ACTIONS } from '../utils/constants';
+import logger from '../utils/logger';
 
 interface CreateUserData {
   email: string;

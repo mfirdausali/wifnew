@@ -10,97 +10,596 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-// Enum for user roles
+// Enums
 enum UserRole {
   ADMIN
-  SALES
-  FINANCE
-  OPERATIONS
+  SALES_MANAGER
+  FINANCE_MANAGER
+  OPERATIONS_MANAGER
 }
 
-// Enum for user status
 enum UserStatus {
   ACTIVE
   INACTIVE
   SUSPENDED
-  DELETED
 }
 
+enum PermissionRiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum EmploymentType {
+  FULL_TIME
+  PART_TIME
+  CONTRACT
+  INTERN
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+// Main User model with all fields from specification
 model User {
-  id              String      @id @default(uuid())
-  email           String      @unique
-  password        String
-  firstName       String      @map("first_name")
-  lastName        String      @map("last_name")
-  role            UserRole    @default(SALES)
-  status          UserStatus  @default(ACTIVE)
-  emailVerified   Boolean     @default(false) @map("email_verified")
-  profilePicture  String?     @map("profile_picture")
-  phoneNumber     String?     @map("phone_number")
-  department      String?
+  id                    String        @id @default(uuid())
+  email                 String        @unique
+  emailNormalized       String        @unique @map("email_normalized")
+  emailVerified         Boolean       @default(false) @map("email_verified")
+  emailVerifiedAt       DateTime?     @map("email_verified_at")
   
-  // Timestamps
-  createdAt       DateTime    @default(now()) @map("created_at")
-  updatedAt       DateTime    @updatedAt @map("updated_at")
-  lastLoginAt     DateTime?   @map("last_login_at")
+  // Personal information
+  firstName             String        @map("first_name")
+  lastName              String        @map("last_name")
+  middleName            String?       @map("middle_name")
+  fullName              String?       @map("full_name") // Will be computed in DB
+  initials              String?       // Will be computed in DB
+  
+  // Professional information
+  position              String?
+  departmentId          String?       @map("department_id")
+  department            Department?   @relation(fields: [departmentId], references: [id], onDelete: SetNull)
+  managerId             String?       @map("manager_id")
+  manager               User?         @relation("UserManager", fields: [managerId], references: [id], onDelete: SetNull)
+  subordinates          User[]        @relation("UserManager")
+  employmentDate        DateTime      @default(now()) @map("employment_date")
+  employmentType        EmploymentType @default(FULL_TIME) @map("employment_type")
+  
+  // Authentication
+  passwordHash          String        @map("password_hash")
+  passwordChangedAt     DateTime      @default(now()) @map("password_changed_at")
+  passwordExpiresAt     DateTime?     @map("password_expires_at")
+  requirePasswordChange Boolean       @default(true) @map("require_password_change")
+  passwordResetToken    String?       @map("password_reset_token")
+  passwordResetExpires  DateTime?     @map("password_reset_expires")
+  
+  // Access control
+  role                  UserRole
+  accessLevel           Int           @map("access_level") @db.SmallInt
+  
+  // Contact information
+  phone                 String?
+  phoneVerified         Boolean       @default(false) @map("phone_verified")
+  phoneCountryCode      String?       @map("phone_country_code")
+  phoneNational         String?       @map("phone_national")
+  
+  // Profile
+  avatarUrl             String?       @map("avatar_url")
+  avatarThumbnailUrl    String?       @map("avatar_thumbnail_url")
+  timezone              String        @default("UTC")
+  language              String        @default("en")
+  dateFormat            String        @default("YYYY-MM-DD") @map("date_format")
+  timeFormat            String        @default("24h") @map("time_format")
+  
+  // Status
+  status                UserStatus    @default(ACTIVE)
+  statusReason          String?       @map("status_reason")
+  suspensionEndDate     DateTime?     @map("suspension_end_date")
+  
+  // Activity tracking
+  lastLoginAt           DateTime?     @map("last_login_at")
+  lastActivityAt        DateTime?     @map("last_activity_at")
+  lastPasswordChangeAt  DateTime?     @map("last_password_change_at")
+  loginCount            Int           @default(0) @map("login_count")
+  failedLoginCount      Int           @default(0) @map("failed_login_count")
+  failedLoginLastAt     DateTime?     @map("failed_login_last_at")
+  
+  // Security
+  twoFactorEnabled      Boolean       @default(false) @map("two_factor_enabled")
+  twoFactorSecret       String?       @map("two_factor_secret")
+  twoFactorBackupCodes  String[]      @map("two_factor_backup_codes")
+  securityQuestions     Json?         @map("security_questions")
+  
+  // Preferences
+  notificationPreferences Json        @default("{\"email\": true, \"sms\": false, \"push\": true, \"desktop\": true}") @map("notification_preferences")
+  uiPreferences         Json          @default("{\"theme\": \"light\", \"density\": \"normal\", \"sidebar_collapsed\": false}") @map("ui_preferences")
+  
+  // Metadata
+  createdAt             DateTime      @default(now()) @map("created_at")
+  createdBy             String?       @map("created_by")
+  createdByUser         User?         @relation("UserCreatedBy", fields: [createdBy], references: [id], onDelete: SetNull)
+  createdUsers          User[]        @relation("UserCreatedBy")
+  
+  updatedAt             DateTime      @updatedAt @map("updated_at")
+  updatedBy             String?       @map("updated_by")
+  updatedByUser         User?         @relation("UserUpdatedBy", fields: [updatedBy], references: [id], onDelete: SetNull)
+  updatedUsers          User[]        @relation("UserUpdatedBy")
+  
+  deletedAt             DateTime?     @map("deleted_at")
+  deletedBy             String?       @map("deleted_by")
+  deletedByUser         User?         @relation("UserDeletedBy", fields: [deletedBy], references: [id], onDelete: SetNull)
+  deletedUsers          User[]        @relation("UserDeletedBy")
+  
+  // Custom fields
+  customFields          Json          @default("{}") @map("custom_fields")
+  tags                  String[]      @default([])
+  notes                 String?       @db.Text
   
   // Relations
-  refreshTokens   RefreshToken[]
-  auditLogs       AuditLog[]
-  sessions        Session[]
+  permissions           UserPermission[]
+  grantedPermissions    UserPermission[] @relation("PermissionGrantedBy")
+  revokedPermissions    UserPermission[] @relation("PermissionRevokedBy")
+  sessions              UserSession[]
+  revokedSessions       UserSession[]    @relation("SessionRevokedBy")
+  activityLogs          UserActivityLog[]
+  auditLogs             AuditLog[]    @relation("AuditUser")
+  targetAuditLogs       AuditLog[]    @relation("AuditTargetUser")
+  impersonatedAuditLogs AuditLog[]    @relation("AuditImpersonator")
+  passwordHistory       PasswordHistory[]
+  passwordHistoryCreated PasswordHistory[] @relation("PasswordHistoryCreatedBy")
+  emailVerifications    EmailVerification[]
+  importLogs            ImportLog[]
+  exportLogs            ExportLog[]
+  departmentsManaged    Department[]  @relation("DepartmentManager")
+  departmentsDeputy     Department[]  @relation("DepartmentDeputyManager")
+  departmentsCreated    Department[]  @relation("DepartmentCreatedBy")
+  departmentsUpdated    Department[]  @relation("DepartmentUpdatedBy")
   
   @@map("users")
-  @@index([email])
+  @@index([emailNormalized])
+  @@index([departmentId])
+  @@index([managerId])
   @@index([role])
   @@index([status])
+  @@index([createdAt])
+  @@index([lastLoginAt])
+  @@index([deletedAt])
+  @@index([role, accessLevel])
+  @@index([createdAt(sort: Desc), id, email, firstName, lastName, role, departmentId, status])
 }
 
-model RefreshToken {
-  id              String      @id @default(uuid())
-  token           String      @unique
-  userId          String      @map("user_id")
-  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  expiresAt       DateTime    @map("expires_at")
-  createdAt       DateTime    @default(now()) @map("created_at")
-  revokedAt       DateTime?   @map("revoked_at")
+// Permissions table
+model Permission {
+  id                  String              @id @default(uuid())
+  code                String              @unique
+  name                String
+  description         String?             @db.Text
+  category            String
+  module              String?
   
-  @@map("refresh_tokens")
-  @@index([token])
-  @@index([userId])
-}
-
-model Session {
-  id              String      @id @default(uuid())
-  userId          String      @map("user_id")
-  user            User        @relation(fields: [userId], references: [id], onDelete: Cascade)
-  ipAddress       String?     @map("ip_address")
-  userAgent       String?     @map("user_agent")
-  isActive        Boolean     @default(true) @map("is_active")
-  createdAt       DateTime    @default(now()) @map("created_at")
-  expiresAt       DateTime    @map("expires_at")
+  // Permission hierarchy
+  parentId            String?             @map("parent_id")
+  parent              Permission?         @relation("PermissionHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children            Permission[]        @relation("PermissionHierarchy")
+  level               Int                 @default(0)
+  path                String?             @db.VarChar(500)
   
-  @@map("sessions")
-  @@index([userId])
+  // Risk and requirements
+  riskLevel           PermissionRiskLevel @default(LOW) @map("risk_level")
+  requires2fa         Boolean             @default(false) @map("requires_2fa")
+  requiresApproval    Boolean             @default(false) @map("requires_approval")
+  
+  // Role associations
+  defaultForRoles     String[]            @map("default_for_roles")
+  excludedFromRoles   String[]            @map("excluded_from_roles")
+  
+  // Access level requirements
+  minAccessLevel      Int                 @default(1) @map("min_access_level") @db.SmallInt
+  
+  // Status
+  isActive            Boolean             @default(true) @map("is_active")
+  isSystem            Boolean             @default(false) @map("is_system")
+  
+  // Metadata
+  createdAt           DateTime            @default(now()) @map("created_at")
+  updatedAt           DateTime            @updatedAt @map("updated_at")
+  
+  // Relations
+  userPermissions     UserPermission[]
+  
+  @@map("permissions")
+  @@index([category])
+  @@index([module])
+  @@index([parentId])
+  @@index([path])
+  @@index([code])
   @@index([isActive])
 }
 
+// User Permissions junction table
+model UserPermission {
+  id                  String      @id @default(uuid())
+  userId              String      @map("user_id")
+  user                User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  permissionId        String      @map("permission_id")
+  permission          Permission  @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+  
+  // Grant details
+  grantedBy           String?     @map("granted_by")
+  grantedByUser       User?       @relation("PermissionGrantedBy", fields: [grantedBy], references: [id], onDelete: SetNull)
+  grantedAt           DateTime    @default(now()) @map("granted_at")
+  grantReason         String?     @map("grant_reason") @db.Text
+  
+  // Expiration
+  expiresAt           DateTime?   @map("expires_at")
+  
+  // Delegation
+  canDelegate         Boolean     @default(false) @map("can_delegate")
+  delegationLimit     Int         @default(0) @map("delegation_limit")
+  
+  // Conditions
+  conditions          Json?
+  
+  // Revocation
+  revokedAt           DateTime?   @map("revoked_at")
+  revokedBy           String?     @map("revoked_by")
+  revokedByUser       User?       @relation("PermissionRevokedBy", fields: [revokedBy], references: [id], onDelete: SetNull)
+  revokeReason        String?     @map("revoke_reason") @db.Text
+  
+  @@unique([userId, permissionId])
+  @@map("user_permissions")
+  @@index([userId])
+  @@index([permissionId])
+  @@index([expiresAt])
+  @@index([grantedBy])
+  @@index([revokedAt])
+}
+
+// Departments table
+model Department {
+  id                  String      @id @default(uuid())
+  code                String      @unique
+  name                String
+  description         String?     @db.Text
+  
+  // Hierarchy
+  parentId            String?     @map("parent_id")
+  parent              Department? @relation("DepartmentHierarchy", fields: [parentId], references: [id], onDelete: Cascade)
+  children            Department[] @relation("DepartmentHierarchy")
+  level               Int         @default(0)
+  path                String?     @db.VarChar(500)
+  sortOrder           Int         @default(0) @map("sort_order")
+  
+  // Manager
+  managerId           String?     @map("manager_id")
+  manager             User?       @relation("DepartmentManager", fields: [managerId], references: [id], onDelete: SetNull)
+  deputyManagerId     String?     @map("deputy_manager_id")
+  deputyManager       User?       @relation("DepartmentDeputyManager", fields: [deputyManagerId], references: [id], onDelete: SetNull)
+  
+  // Contact
+  email               String?
+  phone               String?
+  location            String?     @db.VarChar(500)
+  
+  // Budget
+  budgetCode          String?     @map("budget_code")
+  costCenter          String?     @map("cost_center")
+  
+  // Status
+  isActive            Boolean     @default(true) @map("is_active")
+  
+  // Metadata
+  createdAt           DateTime    @default(now()) @map("created_at")
+  createdBy           String?     @map("created_by")
+  createdByUser       User?       @relation("DepartmentCreatedBy", fields: [createdBy], references: [id], onDelete: SetNull)
+  updatedAt           DateTime    @updatedAt @map("updated_at")
+  updatedBy           String?     @map("updated_by")
+  updatedByUser       User?       @relation("DepartmentUpdatedBy", fields: [updatedBy], references: [id], onDelete: SetNull)
+  
+  // Custom fields
+  customFields        Json        @default("{}") @map("custom_fields")
+  
+  // Relations
+  users               User[]
+  
+  @@map("departments")
+  @@index([code])
+  @@index([parentId])
+  @@index([path])
+  @@index([managerId])
+  @@index([isActive])
+}
+
+// User Activity Logs table
+model UserActivityLog {
+  id                  String      @id @default(uuid())
+  userId              String      @map("user_id")
+  user                User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Activity details
+  action              String      @db.VarChar(100)
+  actionCategory      String?     @map("action_category") @db.VarChar(50)
+  resourceType        String?     @map("resource_type") @db.VarChar(100)
+  resourceId          String?     @map("resource_id")
+  resourceName        String?     @map("resource_name") @db.VarChar(500)
+  
+  // Request details
+  method              String?     @db.VarChar(10)
+  path                String?     @db.VarChar(500)
+  queryParams         Json?       @map("query_params")
+  requestBody         Json?       @map("request_body")
+  responseStatus      Int?        @map("response_status")
+  responseTimeMs      Int?        @map("response_time_ms")
+  
+  // Context
+  ipAddress           String?     @map("ip_address")
+  ipLocation          Json?       @map("ip_location")
+  userAgent           String?     @map("user_agent") @db.Text
+  deviceInfo          Json?       @map("device_info")
+  sessionId           String?     @map("session_id")
+  
+  // Additional data
+  details             Json?
+  errorMessage        String?     @map("error_message") @db.Text
+  stackTrace          String?     @map("stack_trace") @db.Text
+  
+  // Timestamp
+  createdAt           DateTime    @default(now()) @map("created_at")
+  createdDate         DateTime    @map("created_date") @db.Date // For partitioning
+  
+  @@map("user_activity_logs")
+  @@index([userId])
+  @@index([createdAt(sort: Desc)])
+  @@index([action])
+  @@index([resourceType, resourceId])
+  @@index([ipAddress])
+  @@index([sessionId])
+  @@index([createdDate])
+  @@index([userId, createdAt(sort: Desc), action])
+}
+
+// Sessions table
+model UserSession {
+  id                  String      @id @default(uuid())
+  userId              String      @map("user_id")
+  user                User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Session tokens
+  accessTokenHash     String      @unique @map("access_token_hash")
+  refreshTokenHash    String?     @unique @map("refresh_token_hash")
+  
+  // Session details
+  ipAddress           String      @map("ip_address")
+  userAgent           String?     @map("user_agent") @db.Text
+  deviceId            String?     @map("device_id")
+  deviceInfo          Json?       @map("device_info")
+  
+  // Location
+  countryCode         String?     @map("country_code") @db.VarChar(2)
+  region              String?     @db.VarChar(100)
+  city                String?     @db.VarChar(100)
+  latitude            Decimal?    @db.Decimal(10, 8)
+  longitude           Decimal?    @db.Decimal(11, 8)
+  
+  // Timestamps
+  createdAt           DateTime    @default(now()) @map("created_at")
+  lastActivityAt      DateTime    @default(now()) @map("last_activity_at")
+  expiresAt           DateTime    @map("expires_at")
+  
+  // Status
+  isActive            Boolean     @default(true) @map("is_active")
+  revokedAt           DateTime?   @map("revoked_at")
+  revokedBy           String?     @map("revoked_by")
+  revokedByUser       User?       @relation("SessionRevokedBy", fields: [revokedBy], references: [id], onDelete: SetNull)
+  revokeReason        String?     @map("revoke_reason") @db.VarChar(100)
+  
+  // Security
+  securityFlags       String[]    @default([]) @map("security_flags")
+  riskScore           Decimal     @default(0.00) @map("risk_score") @db.Decimal(3, 2)
+  
+  @@map("user_sessions")
+  @@index([userId])
+  @@index([accessTokenHash])
+  @@index([refreshTokenHash])
+  @@index([expiresAt])
+  @@index([deviceId])
+  @@index([ipAddress])
+  @@index([isActive])
+}
+
+// Audit Logs table
 model AuditLog {
-  id              String      @id @default(uuid())
-  userId          String?     @map("user_id")
-  user            User?       @relation(fields: [userId], references: [id], onDelete: SetNull)
-  action          String
-  resource        String
-  resourceId      String?     @map("resource_id")
-  details         Json?
-  ipAddress       String?     @map("ip_address")
-  userAgent       String?     @map("user_agent")
-  createdAt       DateTime    @default(now()) @map("created_at")
+  id                  String      @id @default(uuid())
+  
+  // Actor
+  userId              String?     @map("user_id")
+  user                User?       @relation("AuditUser", fields: [userId], references: [id], onDelete: SetNull)
+  userEmail           String?     @map("user_email")
+  userName            String?     @map("user_name") @db.VarChar(305)
+  impersonatedBy      String?     @map("impersonated_by")
+  impersonator        User?       @relation("AuditImpersonator", fields: [impersonatedBy], references: [id], onDelete: SetNull)
+  
+  // Target
+  targetType          String      @map("target_type") @db.VarChar(100)
+  targetId            String?     @map("target_id")
+  targetName          String?     @map("target_name") @db.VarChar(500)
+  targetUserId        String?     @map("target_user_id")
+  targetUser          User?       @relation("AuditTargetUser", fields: [targetUserId], references: [id], onDelete: SetNull)
+  
+  // Action
+  action              String      @db.VarChar(100)
+  actionCategory      String      @map("action_category") @db.VarChar(50)
+  
+  // Changes
+  oldValues           Json?       @map("old_values")
+  newValues           Json?       @map("new_values")
+  changedFields       String[]    @map("changed_fields")
+  
+  // Context
+  ipAddress           String?     @map("ip_address")
+  userAgent           String?     @map("user_agent") @db.Text
+  sessionId           String?     @map("session_id")
+  requestId           String?     @map("request_id") @db.VarChar(100)
+  
+  // Additional details
+  details             Json?
+  reason              String?     @db.Text
+  
+  // Result
+  success             Boolean     @default(true)
+  errorCode           String?     @map("error_code") @db.VarChar(100)
+  errorMessage        String?     @map("error_message") @db.Text
+  
+  // Timestamp
+  createdAt           DateTime    @default(now()) @map("created_at")
+  
+  // Compliance
+  retentionDays       Int         @default(2555) @map("retention_days")
+  expiresAt           DateTime?   @map("expires_at")
   
   @@map("audit_logs")
   @@index([userId])
+  @@index([targetType, targetId])
+  @@index([targetUserId])
   @@index([action])
-  @@index([resource])
-  @@index([createdAt])
+  @@index([createdAt(sort: Desc)])
+  @@index([ipAddress])
+  @@index([actionCategory])
+}
+
+// Password History table
+model PasswordHistory {
+  id                  String      @id @default(uuid())
+  userId              String      @map("user_id")
+  user                User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Password hash (for checking reuse)
+  passwordHash        String      @map("password_hash")
+  
+  // Metadata
+  createdAt           DateTime    @default(now()) @map("created_at")
+  createdBy           String?     @map("created_by")
+  createdByUser       User?       @relation("PasswordHistoryCreatedBy", fields: [createdBy], references: [id], onDelete: SetNull)
+  
+  // Change details
+  changeReason        String?     @map("change_reason") @db.VarChar(100)
+  changeIp            String?     @map("change_ip")
+  changeUserAgent     String?     @map("change_user_agent") @db.Text
+  
+  // Cleanup
+  expiresAt           DateTime    @map("expires_at")
+  
+  @@map("password_history")
+  @@index([userId])
+  @@index([createdAt(sort: Desc)])
+  @@index([expiresAt])
+}
+
+// Email Verification table
+model EmailVerification {
+  id                  String      @id @default(uuid())
+  userId              String      @map("user_id")
+  user                User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  // Email details
+  email               String
+  token               String      @unique
+  
+  // Type
+  type                String      @db.VarChar(50) // signup, change, recovery
+  
+  // Status
+  verifiedAt          DateTime?   @map("verified_at")
+  
+  // Expiration
+  expiresAt           DateTime    @map("expires_at")
+  
+  // Tracking
+  sentAt              DateTime    @default(now()) @map("sent_at")
+  sentCount           Int         @default(1) @map("sent_count")
+  lastSentAt          DateTime    @default(now()) @map("last_sent_at")
+  
+  // Verification details
+  verifiedIp          String?     @map("verified_ip")
+  verifiedUserAgent   String?     @map("verified_user_agent") @db.Text
+  
+  @@map("email_verifications")
+  @@index([token])
+  @@index([userId])
+  @@index([expiresAt])
+}
+
+// Import Logs table
+model ImportLog {
+  id                  String      @id @default(uuid())
+  
+  // Import details
+  filename            String      @db.VarChar(500)
+  fileSize            BigInt?     @map("file_size")
+  fileHash            String?     @map("file_hash") @db.VarChar(64)
+  format              String      @db.VarChar(20)
+  
+  // Processing
+  totalRows           Int         @map("total_rows")
+  processedRows       Int         @default(0) @map("processed_rows")
+  successCount        Int         @default(0) @map("success_count")
+  failureCount        Int         @default(0) @map("failure_count")
+  skipCount           Int         @default(0) @map("skip_count")
+  
+  // Results
+  results             Json?
+  errors              Json?
+  
+  // Metadata
+  importedBy          String      @map("imported_by")
+  importedByUser      User        @relation(fields: [importedBy], references: [id], onDelete: SetNull)
+  startedAt           DateTime    @default(now()) @map("started_at")
+  completedAt         DateTime?   @map("completed_at")
+  durationMs          Int?        @map("duration_ms")
+  
+  // Status
+  status              String      @default("processing") @db.VarChar(50)
+  
+  @@map("import_logs")
+  @@index([importedBy])
+  @@index([startedAt(sort: Desc)])
+  @@index([status])
+}
+
+// Export Logs table
+model ExportLog {
+  id                  String      @id @default(uuid())
+  
+  // Export details
+  format              String      @db.VarChar(20)
+  filters             Json?
+  fields              String[]
+  
+  // Results
+  rowCount            Int?        @map("row_count")
+  fileSize            BigInt?     @map("file_size")
+  fileUrl             String?     @map("file_url") @db.VarChar(500)
+  
+  // Metadata
+  exportedBy          String      @map("exported_by")
+  exportedByUser      User        @relation(fields: [exportedBy], references: [id], onDelete: SetNull)
+  createdAt           DateTime    @default(now()) @map("created_at")
+  expiresAt           DateTime?   @map("expires_at")
+  
+  // Access tracking
+  downloadCount       Int         @default(0) @map("download_count")
+  lastDownloadedAt    DateTime?   @map("last_downloaded_at")
+  
+  @@map("export_logs")
+  @@index([exportedBy])
+  @@index([createdAt(sort: Desc)])
+  @@index([expiresAt])
 }
 
 // Additional models for business functionality
@@ -136,12 +635,4 @@ model Order {
   @@map("orders")
   @@index([customerId])
   @@index([status])
-}
-
-enum OrderStatus {
-  PENDING
-  PROCESSING
-  SHIPPED
-  DELIVERED
-  CANCELLED
 }
