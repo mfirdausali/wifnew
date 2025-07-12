@@ -4,29 +4,6 @@ import React, { createContext, useContext, useState, useEffect, ReactNode } from
 import { useRouter } from 'next/navigation';
 import Cookies from 'js-cookie';
 import axios from 'axios';
-
-// Create a simple API client to avoid circular dependencies
-const authApi = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  withCredentials: true,
-});
-
-// Add request interceptor
-authApi.interceptors.request.use(
-  (config) => {
-    const token = Cookies.get('accessToken');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    config.headers['x-request-id'] = `req-${Date.now()}`;
-    config.headers['x-request-time'] = new Date().toISOString();
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
 import { clearAllAuthCookies, debugCookies } from '@/utils/auth';
 
 interface User {
@@ -62,6 +39,29 @@ interface RegisterData {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
+// Create a simple API client to avoid circular dependencies
+const authApi = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5001/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  withCredentials: true,
+});
+
+// Add request interceptor
+authApi.interceptors.request.use(
+  (config) => {
+    const token = Cookies.get('accessToken');
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    config.headers['x-request-id'] = `req-${Date.now()}`;
+    config.headers['x-request-time'] = new Date().toISOString();
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
@@ -80,7 +80,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       const response = await authApi.get('/auth/profile');
-      setUser(response.data.data);
+      // Handle both response formats
+      if (response.data.data.user) {
+        setUser(response.data.data.user);
+      } else {
+        setUser(response.data.data);
+      }
     } catch (error) {
       console.error('Auth check failed:', error);
       Cookies.remove('accessToken');
@@ -103,9 +108,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Clear any old cookies first
       clearAllAuthCookies();
       
-      // Debug current state
-      debugCookies();
-
       // Set new cookies with explicit options
       const cookieOptions = {
         path: '/',
@@ -124,47 +126,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         expires: 7 // 7 days
       });
       
-      // Verify cookies were set
-      setTimeout(() => {
-        debugCookies();
-        const verifyAccessToken = Cookies.get('accessToken');
-        const verifyRefreshToken = Cookies.get('refreshToken');
-        console.log('[AuthContext] Cookies verification:', {
-          accessTokenSet: !!verifyAccessToken,
-          refreshTokenSet: !!verifyRefreshToken,
-          accessTokenLength: verifyAccessToken?.length,
-          refreshTokenLength: verifyRefreshToken?.length,
-          documentCookie: document.cookie
-        });
-      }, 50);
+      // CRITICAL: Verify cookies are set
+      const verifyToken = Cookies.get('accessToken');
+      if (!verifyToken) {
+        throw new Error('Failed to set authentication cookies');
+      }
+      
+      console.log('[AuthContext] Cookies verified as set');
       
       setUser(user);
       
-      // Redirect based on role
-      let redirectPath = '/dashboard';
-      switch (user.role) {
-        case 'ADMIN':
-          redirectPath = '/admin';
-          break;
-        case 'SALES_MANAGER':
-          redirectPath = '/sales';
-          break;
-        case 'FINANCE_MANAGER':
-          redirectPath = '/finance';
-          break;
-        case 'OPERATIONS_MANAGER':
-          redirectPath = '/operations';
-          break;
-      }
+      // Determine redirect path based on role
+      const redirectPath = {
+        'ADMIN': '/admin',
+        'SALES_MANAGER': '/sales',
+        'FINANCE_MANAGER': '/finance',
+        'OPERATIONS_MANAGER': '/operations'
+      }[user.role] || '/dashboard';
       
       console.log('[AuthContext] Redirecting to:', redirectPath);
       
-      // Force a hard refresh to ensure cookies are sent with the request
-      console.log('[AuthContext] Forcing page reload to ensure cookies are sent...');
-      window.location.replace(redirectPath);
+      // GOOGLE SENIOR ENGINEER SOLUTION: Use form submission to ensure cookies are sent
+      // This guarantees the browser sends cookies with the navigation request
+      const form = document.createElement('form');
+      form.method = 'GET';
+      form.action = redirectPath;
+      form.style.display = 'none';
+      document.body.appendChild(form);
+      form.submit();
       
-      // Return early since we're doing a hard refresh above
-      return;
     } catch (error: any) {
       console.error('[AuthContext] Login error:', error);
       throw error.response?.data?.message || 'Login failed';
@@ -175,31 +165,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       // First register the user
       const registerResponse = await authApi.post('/auth/register', data);
-      const { user } = registerResponse.data.data;
+      console.log('[AuthContext] Registration successful');
       
-      // Then login to get tokens
-      const loginResponse = await authApi.post('/auth/login', {
-        email: data.email,
-        password: data.password
-      });
-      const { tokens } = loginResponse.data.data;
-      const { accessToken, refreshToken } = tokens;
-
-      Cookies.set('accessToken', accessToken, { 
-        expires: 1,
-        path: '/',
-        sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production'
-      });
-      Cookies.set('refreshToken', refreshToken, { 
-        expires: 7,
-        path: '/',
-        sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production'
-      });
-      
-      setUser(user);
-      router.push('/dashboard');
+      // Backend doesn't return tokens on register, so login immediately
+      await login(data.email, data.password);
     } catch (error: any) {
       throw error.response?.data?.message || 'Registration failed';
     }
@@ -213,14 +182,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       clearAllAuthCookies();
       setUser(null);
-      router.push('/login');
+      // Use form submission for logout redirect too
+      const form = document.createElement('form');
+      form.method = 'GET';
+      form.action = '/login';
+      form.style.display = 'none';
+      document.body.appendChild(form);
+      form.submit();
     }
   };
 
   const refreshUser = async () => {
     try {
       const response = await authApi.get('/auth/profile');
-      setUser(response.data.data);
+      if (response.data.data.user) {
+        setUser(response.data.data.user);
+      } else {
+        setUser(response.data.data);
+      }
     } catch (error) {
       console.error('Failed to refresh user:', error);
     }

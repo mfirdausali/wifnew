@@ -19,18 +19,28 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('[LoginPage] Form submitted', { email, password: '***' });
+    
+    if (!email || !password) {
+      setError('Please enter both email and password');
+      return;
+    }
+    
     setError('');
     setLoading(true);
+    
+    console.log('[LoginPage] Starting login attempt...');
 
     try {
       await login(email, password);
+      console.log('[LoginPage] Login function completed');
     } catch (err: any) {
+      console.error('[LoginPage] Login error:', err);
       setError(err.toString());
-    } finally {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <Card className="w-full max-w-md">
@@ -40,7 +50,7 @@ export default function LoginPage() {
             Enter your credentials to access your account
           </CardDescription>
         </CardHeader>
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={handleSubmit} noValidate>
           <CardContent className="space-y-4">
             {error && (
               <div className="bg-red-50 text-red-600 p-3 rounded-md text-sm">
@@ -56,6 +66,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
+                autoComplete="email"
               />
             </div>
             <div className="space-y-2">
@@ -66,11 +77,16 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                autoComplete="current-password"
               />
             </div>
           </CardContent>
           <CardFooter className="flex flex-col space-y-2">
-            <Button type="submit" className="w-full" disabled={loading}>
+            <Button 
+              type="submit" 
+              className="w-full" 
+              disabled={loading}
+            >
               {loading ? 'Signing in...' : 'Sign In'}
             </Button>
             <p className="text-sm text-center text-gray-600">
@@ -85,3 +101,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
+export const dynamic = "force-dynamic";

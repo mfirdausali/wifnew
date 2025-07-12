@@ -4,14 +4,6 @@ import { TokenService } from '../services/token.service';
 import { getClientIp, getUserAgent } from '../utils/helpers';
 import { HTTP_STATUS } from '../utils/constants';
 
-interface AuthRequest extends Request {
-  user?: {
-    id: string;
-    email: string;
-    role: string;
-  };
-}
-
 export class AuthController {
   static async register(req: Request, res: Response, next: NextFunction) {
     try {
@@ -49,7 +41,7 @@ export class AuthController {
     }
   }
 
-  static async logout(req: AuthRequest, res: Response, next: NextFunction) {
+  static async logout(req: Request, res: Response, next: NextFunction) {
     try {
       const token = req.headers.authorization?.substring(7) || '';
       await AuthService.logout(req.user!.id, token);
@@ -78,7 +70,7 @@ export class AuthController {
     }
   }
 
-  static async changePassword(req: AuthRequest, res: Response, next: NextFunction) {
+  static async changePassword(req: Request, res: Response, next: NextFunction) {
     try {
       const { currentPassword, newPassword } = req.body;
       await AuthService.changePassword(req.user!.id, currentPassword, newPassword);
@@ -92,7 +84,7 @@ export class AuthController {
     }
   }
 
-  static async getProfile(req: AuthRequest, res: Response, next: NextFunction) {
+  static async getProfile(req: Request, res: Response, next: NextFunction) {
     try {
       const user = await AuthService.getUserById(req.user!.id);
 

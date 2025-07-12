@@ -75,7 +75,10 @@ export class AuthService {
       data: {
         userId: user.id,
         action: AUDIT_ACTIONS.USER_REGISTER,
+        targetType: 'user',
+        targetId: user.id,
         targetUserId: user.id,
+        actionCategory: 'auth',
         details: { email, role },
         ipAddress: '',
         userAgent: '',
@@ -116,18 +119,10 @@ export class AuthService {
       data: { lastLoginAt: new Date() },
     });
 
-    // Generate tokens
-    const tokens = await TokenService.generateTokenPair(user);
-
-    // Create session
-    await prisma.userSession.create({
-      data: {
-        userId: user.id,
-        sessionToken: tokens.accessToken,
-        ipAddress: ipAddress || '',
-        userAgent: userAgent || '',
-        expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
-      },
+    // Generate tokens (this also creates the session)
+    const tokens = await TokenService.generateTokenPair(user, {
+      ipAddress: ipAddress || '',
+      userAgent: userAgent || '',
     });
 
     // Create audit log
@@ -135,6 +130,9 @@ export class AuthService {
       data: {
         userId: user.id,
         action: AUDIT_ACTIONS.USER_LOGIN,
+        targetType: 'user',
+        targetId: user.id,
+        actionCategory: 'auth',
         ipAddress: ipAddress || '',
         userAgent: userAgent || '',
         details: { email },
@@ -164,6 +162,9 @@ export class AuthService {
       data: {
         userId,
         action: AUDIT_ACTIONS.USER_LOGOUT,
+        targetType: 'user',
+        targetId: userId,
+        actionCategory: 'auth',
         ipAddress: '',
         userAgent: '',
       },
@@ -220,7 +221,10 @@ export class AuthService {
       data: {
         userId,
         action: AUDIT_ACTIONS.PASSWORD_CHANGE,
+        targetType: 'user',
+        targetId: userId,
         targetUserId: userId,
+        actionCategory: 'auth',
         ipAddress: '',
         userAgent: '',
       },

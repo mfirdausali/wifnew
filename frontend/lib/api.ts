@@ -18,16 +18,26 @@ api.interceptors.request.use(
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
+    
+    // Add custom headers
+    config.headers['x-request-id'] = `req-${Date.now()}`;
+    config.headers['x-request-time'] = new Date().toISOString();
+    
+    console.log('[API] Request:', config.method?.toUpperCase(), config.url);
     return config;
   },
   (error) => {
+    console.error('[API] Request error:', error);
     return Promise.reject(error);
   }
 );
 
 // Response interceptor to handle token refresh
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('[API] Response:', response.config.url, response.status);
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config;
 
@@ -65,3 +75,4 @@ api.interceptors.response.use(
 );
 
 export default api;
+export { api as apiClient };
